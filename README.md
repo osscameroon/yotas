@@ -8,29 +8,28 @@ Oss's reward system
 
 # english
 
-Yotas is OSS's reward system, we would like our open source contributors across the organisation to be rewarded for the effort and energy they put into the platform. Each interaction they have on GitHub will give them a certain number of yotas which they can exchange for goodies in an OSS shop, mentoring, ebooks, etc....
+Yotas is an open source engagement awarding system. Open source contributors across the organisation are awarded for the effort and energy they put into the platform. Each interaction they have on GitHub will give them a certain number of Yotas which can be traded for goodies, mentoring, ebooks (etc...) in an OSS shop.
 
 ## Why?
 Contributing to open source takes some effort, and we would like every contributor to be rewarded for the time and energy they put into helping our community.
 
 ## Description
-This reward system is strongly inspired by the correction points and wallet points system applied at Ecole 42. Correction points at Ecole 42 are points that students earn by correcting other students' projects, and lose when they have other students correct their projects. Wallet points are earned when a user contributes to the community, and wallets are directly redeemable for gifts such as 42 logo t-shirts, jacuzzi and other fun rewards.
-
-The yota will be a reward related to the organisation, which the user will get by creating problems, reviewing code, merging their pull requests, etc. They will be able to use these well earned yotas to buy things in our shop like a call with the project maintainer, t-shirts, internet connection (requires real money), time in a coworking space (requires partnership) and many more.
+The yota will be an award related to the organisation, which the user will get by creating problems, reviewing code, merging their pull requests, etc. They will be able to use these well earned yotas to buy things in our shop like a call with the project maintainer, t-shirts, internet connection (requires real money), time in a coworking space (requires partnership) and many more.
 
 ## How it works
 
-Yotas is a system that allows open source organisations to give rewards to their contributors according to the resources they have.
+Yotas is a system that allows open source organisations to give awards to their contributors according to the resources they have.
 
 Here is the schema:
 
 - I am an organisation X with Y resources 
 - I want to redistribute Y to active contributors. 
 - Each time a person contributes, he earns yotas, and with our Y resources we set up a shop where the contributor buys in yotas.
+- A resource could be some money or anything else.
 
-**The purpose of yotas is not to convert the contribution into money.**
+**Note that the purpose of yotas is not to convert the contribution into money.**
 
-It is not a way to fund an open source project as well, but it can allow to use the funding received to reward the contributors.
+It is not a way to fund an open source project as well, but it can allow to use the funding received to award the contributors.
 
 Github sponsors and Yotas can be used together as follows:
 
@@ -47,41 +46,40 @@ This is a web project, which will be heavily based on a GitHub application that 
 
 # french
 
-Yotas est le système de récompense d'OSS, nous aimerions que nos contributeurs open source à travers l'organisation soient récompensés pour les efforts et l'énergie qu'ils mettent dans la plateforme. Chaque interaction qu'ils auront sur GitHub leur donnera un certain nombre de yotas qu'ils pourront échanger contre des goodies dans une boutique OSS, du mentorat, des ebooks, etc....
+Yotas est un système de récompense de l'engagement dans les projets open source. Les contributeurs open source de l'organisation sont récompensés pour les efforts et l'énergie qu'ils consacrent à la plateforme. Chaque interaction qu'ils ont sur GitHub leur donne un certain nombre de Yotas qui peuvent être échangés contre des goodies, du mentoring, des ebooks (etc...) dans une boutique OSS.
 
 ## Pourquoi ?
-Contribuer à l'open source demande quelques efforts, et nous aimerions que chaque contributeur soit récompensé pour le temps et l'énergie qu'il met à aider notre communauté.
+Contribuer à l'open source demande un certain effort, et nous aimerions que chaque contributeur soit récompensé pour le temps et l'énergie qu'il consacre à aider notre communauté.
 
 ## Description
-Ce système de récompense est fortement inspiré du système de points de correction et de points portefeuille appliqué à l'Ecole 42. Les points de correction à l'école 42 sont des points que les étudiants gagnent en corrigeant les projets d'autres étudiants, et perdent lorsqu'ils font corriger leurs projets par d'autres étudiants. Les points portefeuille sont gagnés lorsqu'un utilisateur contribue à la communauté, les portefeuilles sont directement échangeables contre des cadeaux comme des t-shirts avec le logo de 42, du temps dans le jacuzzi et d'autres récompenses amusantes.
-
-Le yota sera une récompense liée à l'organisation, que l'utilisateur obtiendra en créant des problèmes, en révisant du code, en faisant fusionner ses pull request, etc. Ils pourront utiliser ces yotas bien gagnés pour acheter dans notre boutique des choses comme un appel avec le mainteneur du projet, des t-shirts, une connexion internet, du temps dans un espace de coworking et bien d'autres choses encore.
+Le yota sera une récompense liée à l'organisation, que l'utilisateur obtiendra en soumettant des issues, en faisant du code review, pull requests, etc. Ils pourront utiliser ces yotas bien gagnés pour acheter des choses dans notre boutique comme un tête à téte avec le lead du projet, des t-shirts, une connexion internet (nécessite de l'argent réel), du temps dans un espace de coworking (nécessite un partenariat) et bien plus encore.
 
 ## Fonctionnement
 
-Yotas est un systeme qui permet aux organisations open source de donner des récompenses à leurs contributeurs en fonction des moyens qu'elles disposent.
+Yotas est un système qui permet aux organisations open source de décerner des prix à leurs contributeurs en fonction des ressources dont ils disposent.
 
-Voici le schemas:
+Voici le schéma :
 
-- Je suis une organisation X qui dispose de Y moyens 
-- je souhaite redistribuer Y aux contributeurs actifs. 
-- Chaque fois qu'une personne contribue il gagne des yotas, et avec nos moyens Y on met en place un shop où le contributeur achète en yotas.
+- Je suis une organisation X avec Y ressources 
+- Je veux redistribuer Y aux contributeurs actifs. 
+- Chaque fois qu'une personne contribue, elle gagne des yotas, et avec nos Y ressources nous mettons en place une boutique où le contributeur achète en yotas.
+- Une ressource peut être de l'argent ou n'importe quoi d'autre.
 
-L'objectif de yotas n'est pas de convertir la contribution en argent.
+**Notez que le but des yotas n'est pas de convertir la contribution en argent**.
 
-Ce n'est pas un moyen pour financer un projet open source également, mais il peut permettre d'utiliser le financement reçu pour récompenser les contributeurs.
+Ce n'est pas non plus un moyen de financer un projet open source, mais il peut permettre d'utiliser les fonds reçus pour récompenser les contributeurs.
 
-Github sponsors et Yotas peuvent etre utilisés ensemble comme suit:
+Les sponsors Github et les Yotas peuvent être utilisés ensemble comme suit :
 
-- L'organisation X reçoit du financement donc possèdes Y ressources
-- Avec ces ressources elle crée un Shop où elle mets des articles que ses contributeurs peuvent acheter en Yotas
+- L'organisation X reçoit un financement et dispose donc de Y ressources
+- Avec ces ressources, elle crée une boutique où elle place des articles que ses contributeurs peuvent acheter sur Yotas.
 
-Ce qui peut être mis dans un shop sur yotas peut être tout et n'importe quoi (mentoring, tutoriels, goodies,...) c'est à l'organisation de décider en fonction de ce qu'elle a. 
+Ce qui peut être mis dans une boutique sur Yotas peut être tout et n'importe quoi (mentoring, tutoriels, goodies,...) c'est à l'organisation de décider en fonction de ce qu'elle a. 
 
-Pour OSS dans un premier temps c'est proposer du mentoring aux juniors, et on essaye d'avoir des Issues assez abordables pour qu'ils puissent contribuer. Mais on refléchis encore sur ce qu'on peut proposer d'autre, notemment aux seniors.
+Pour OSS, la première étape est d'offrir un mentorat aux juniors, et nous essayons d'avoir des issues abordables pour qu'ils puissent contribuer. Mais nous réfléchissons encore à ce que nous pouvons offrir d'autre, en particulier aux seniors.
 
 ## Note
-Il s'agit d'un projet web, qui sera fortement basé sur une application GitHub qui surveillera tous les événements de l'organisation et attribuera des points d'interaction et attribuera des points d'interaction.
+Il s'agit d'un projet web, qui sera fortement basé sur une application GitHub qui suivra tous les événements de l'organisation et attribuera des points d'interaction.
 
 ## License
 
