@@ -83,4 +83,4 @@ Il s'agit d'un projet web, qui sera fortement basé sur une application GitHub q
 
 ## License
 
- [MIT](https://choosealicense.com/licenses/mit/)
+ [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0)
