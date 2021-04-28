@@ -1,10 +1,9 @@
 package main
 
 import (
-	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/osscameroon/yotas/backend/app"
+	"github.com/osscameroon/yotas/app"
 	"log"
 	"net/http"
 )
@@ -25,9 +24,6 @@ func main() {
 	apiRouterV1.GET("", func(c *gin.Context) {
 		c.String(http.StatusOK, "Yotas")
 	})
-
-	// ─── WEB APP ───────────────────────────────────────────────────────
-	router.Use(static.Serve("/", static.LocalFile("./frontend", true)))
 
 	log.Println("HTTP Server Started on port ", app.Env.HttpPort)
 	err := router.Run(":" + app.Env.HttpPort)
