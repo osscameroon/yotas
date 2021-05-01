@@ -1,0 +1,7 @@
+dist
+build
+coverage
+node_modules
+src/reportWebVitals.ts
+src/setuppTest.ts
+src/react-app-enf.d.ts
