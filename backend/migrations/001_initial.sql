@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS Wallets (
 
     walletID VARCHAR(300) NOT NULL,
     userID   INT NOT NULL,
+    organisationID   INT NOT NULL,
     balance INT NOT NULL,
 
     createdAt TIMESTAMP,
