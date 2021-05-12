@@ -1,7 +1,7 @@
 -- +goose Up
 
 -- +goose StatementBegin
-CREATE TABLE IF NOT EXISTS Organisations (
+CREATE TABLE IF NOT EXISTS organisations (
     id INT NOT NULL AUTO_INCREMENT,
 
     `name` VARCHAR(150),
@@ -13,13 +13,12 @@ CREATE TABLE IF NOT EXISTS Organisations (
 
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
 
     UNIQUE(email, github_id),
     PRIMARY KEY(Id)
 );
 
-CREATE TABLE IF NOT EXISTS Users (
+CREATE TABLE IF NOT EXISTS users (
     id INT NOT NULL AUTO_INCREMENT,
 
     `name` VARCHAR(150),
@@ -29,13 +28,12 @@ CREATE TABLE IF NOT EXISTS Users (
 
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
 
     UNIQUE(email, github_id),
     PRIMARY KEY(Id)
 );
 
-CREATE TABLE IF NOT EXISTS Wallets (
+CREATE TABLE IF NOT EXISTS wallets (
     id INT NOT NULL AUTO_INCREMENT,
 
     wallet_id VARCHAR(300) NOT NULL,
@@ -45,7 +43,6 @@ CREATE TABLE IF NOT EXISTS Wallets (
 
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
 
     UNIQUE(id, wallet_id),
     PRIMARY KEY(Id),
@@ -53,7 +50,7 @@ CREATE TABLE IF NOT EXISTS Wallets (
     FOREIGN KEY (organisation_id) REFERENCES Organisations(organisation_id)
 );
 
-CREATE TABLE IF NOT EXISTS Articles (
+CREATE TABLE IF NOT EXISTS articles (
     id INT NOT NULL AUTO_INCREMENT,
 
     `name` VARCHAR(150),
@@ -64,13 +61,12 @@ CREATE TABLE IF NOT EXISTS Articles (
 
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
 
     UNIQUE(id),
     PRIMARY KEY(Id)
 );
 
-CREATE TABLE IF NOT EXISTS Orders (
+CREATE TABLE IF NOT EXISTS orders (
     id INT NOT NULL AUTO_INCREMENT,
 
     wallet_id VARCHAR(300),
@@ -79,7 +75,6 @@ CREATE TABLE IF NOT EXISTS Orders (
 
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
 
     UNIQUE(id),
     PRIMARY KEY(Id),
@@ -87,7 +82,7 @@ CREATE TABLE IF NOT EXISTS Orders (
     FOREIGN KEY (article_id) REFERENCES Articles(article_id)
 );
 
-CREATE TABLE IF NOT EXISTS OrganisationsArticles (
+CREATE TABLE IF NOT EXISTS organisations_articles (
     id INT NOT NULL AUTO_INCREMENT,
 
     organisation_id INT NOT NULL,
@@ -95,7 +90,6 @@ CREATE TABLE IF NOT EXISTS OrganisationsArticles (
 
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
 
     UNIQUE(id),
     PRIMARY KEY(Id),
@@ -103,15 +97,15 @@ CREATE TABLE IF NOT EXISTS OrganisationsArticles (
     FOREIGN KEY (article_id) REFERENCES Articles(article_id)
 );
 
-CREATE TABLE IF NOT EXISTS OrganisationsUsers (
+CREATE TABLE IF NOT EXISTS organisations_users (
     id INT NOT NULL AUTO_INCREMENT,
 
     organisation_id INT NOT NULL,
     user_id INT NOT NULL,
+    active BOOLEAN,
 
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
 
     UNIQUE(id),
     PRIMARY KEY(Id),
@@ -119,18 +113,18 @@ CREATE TABLE IF NOT EXISTS OrganisationsUsers (
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS Operations (
+CREATE TABLE IF NOT EXISTS operations (
     id INT NOT NULL AUTO_INCREMENT,
 
     amount INT NOT NULL,
     wallet_id VARCHAR(300),
-    operationType ENUM ('buy','receive'),
+    operation_type ENUM ('buy','receive'),
     approuved BOOLEAN,
-    operationHash TEXT,
+    operation_hash TEXT,
 
     created_at TIMESTAMP,
 
-    UNIQUE(operationHash),
+    UNIQUE(operation_hash),
     PRIMARY KEY(Id)
     FOREIGN KEY (wallet_id) REFERENCES Wallets(wallet_id),
 );
@@ -140,12 +134,12 @@ CREATE TABLE IF NOT EXISTS Operations (
 -- +goose Down
 
 -- +goose StatementBegin
-DROP TABLE Organisations;
-DROP TABLE Users;
-DROP TABLE Wallets;
-DROP TABLE Articles;
-DROP TABLE Orders;
-DROP TABLE OrganisationsArticles;
-DROP TABLE OrganisationsUsers;
-DROP TABLE Operations;
+DROP TABLE organisations;
+DROP TABLE users;
+DROP TABLE wallets;
+DROP TABLE articles;
+DROP TABLE orders;
+DROP TABLE organisations_articles;
+DROP TABLE organisations_users;
+DROP TABLE operations;
 -- +goose StatementEnd
