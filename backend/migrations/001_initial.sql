@@ -3,65 +3,68 @@
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS Organisations (
     id INT NOT NULL AUTO_INCREMENT,
+
     `name` VARCHAR(150),
     email VARCHAR(150) NOT NULL,
-    githubID VARCHAR(150) NOT NULL,
-    avatarUrl VARCHAR(300),
+    github_id VARCHAR(150) NOT NULL,
+    avatar_url VARCHAR(300),
     webSite VARCHAR(300),
     `description` VARCHAR(300),
 
-    createdAt TIMESTAMP,
-    updatedAt TIMESTAMP,
-    deletedAt TIMESTAMP,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
 
-    UNIQUE(email, githubID),
+    UNIQUE(email, github_id),
     PRIMARY KEY(Id)
 );
 
 CREATE TABLE IF NOT EXISTS Users (
     id INT NOT NULL AUTO_INCREMENT,
+
     `name` VARCHAR(150),
     email VARCHAR(150) NOT NULL,
-    githubID VARCHAR(150) NOT NULL,
-    avatarUrl VARCHAR(300),
+    github_id VARCHAR(150) NOT NULL,
+    avatar_url VARCHAR(300),
 
-    createdAt TIMESTAMP,
-    updatedAt TIMESTAMP,
-    deletedAt TIMESTAMP,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
 
-    UNIQUE(email, githubID),
+    UNIQUE(email, github_id),
     PRIMARY KEY(Id)
 );
 
 CREATE TABLE IF NOT EXISTS Wallets (
     id INT NOT NULL AUTO_INCREMENT,
 
-    walletID VARCHAR(300) NOT NULL,
-    userID   INT NOT NULL,
-    organisationID   INT NOT NULL,
+    wallet_id VARCHAR(300) NOT NULL,
+    user_id   INT NOT NULL,
+    organisation_id   INT NOT NULL,
     balance INT NOT NULL,
 
-    createdAt TIMESTAMP,
-    updatedAt TIMESTAMP,
-    deletedAt TIMESTAMP,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
 
-    UNIQUE(walletID),
+    UNIQUE(wallet_id),
     PRIMARY KEY(Id),
-    FOREIGN KEY (userID) REFERENCES Users(userID),
-    FOREIGN KEY (organisationID) REFERENCES Organisations(organisationID)
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (organisation_id) REFERENCES Organisations(organisation_id)
 );
 
 CREATE TABLE IF NOT EXISTS Articles (
     id INT NOT NULL AUTO_INCREMENT,
+
     `name` VARCHAR(150),
     `description` TEXT,
     quantity INTEGER,
-    yotas INT NOT NULL,
+    price INT NOT NULL,
     metadata TEXT,
 
-    createdAt TIMESTAMP,
-    updatedAt TIMESTAMP,
-    deletedAt TIMESTAMP,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
 
     UNIQUE(id),
     PRIMARY KEY(Id)
@@ -70,64 +73,66 @@ CREATE TABLE IF NOT EXISTS Articles (
 CREATE TABLE IF NOT EXISTS Orders (
     id INT NOT NULL AUTO_INCREMENT,
 
-    walletID VARCHAR(300),
-    articleID INT NOT NULL,
+    wallet_id VARCHAR(300),
+    article_id INT NOT NULL,
     quantity INTEGER,
 
-    createdAt TIMESTAMP,
-    updatedAt TIMESTAMP,
-    deletedAt TIMESTAMP,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
 
     UNIQUE(id),
     PRIMARY KEY(Id),
-    FOREIGN KEY (walletID) REFERENCES Wallets(walletID),
-    FOREIGN KEY (articleID) REFERENCES Articles(articleID)
+    FOREIGN KEY (wallet_id) REFERENCES Wallets(wallet_id),
+    FOREIGN KEY (article_id) REFERENCES Articles(article_id)
 );
 
 CREATE TABLE IF NOT EXISTS OrganisationsArticles (
     id INT NOT NULL AUTO_INCREMENT,
-    organisationID INT NOT NULL,
-    articleID INT NOT NULL,
 
-    createdAt TIMESTAMP,
-    updatedAt TIMESTAMP,
-    deletedAt TIMESTAMP,
+    organisation_id INT NOT NULL,
+    article_id INT NOT NULL,
+
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
 
     UNIQUE(id),
     PRIMARY KEY(Id),
-    FOREIGN KEY (organisationID) REFERENCES Organisations(organisationID),
-    FOREIGN KEY (articleID) REFERENCES Articles(articleID)
+    FOREIGN KEY (organisation_id) REFERENCES Organisations(organisation_id),
+    FOREIGN KEY (article_id) REFERENCES Articles(article_id)
 );
 
 CREATE TABLE IF NOT EXISTS OrganisationsUsers (
     id INT NOT NULL AUTO_INCREMENT,
-    organisationID INT NOT NULL,
-    userID INT NOT NULL,
 
-    createdAt TIMESTAMP,
-    updatedAt TIMESTAMP,
-    deletedAt TIMESTAMP,
+    organisation_id INT NOT NULL,
+    user_id INT NOT NULL,
+
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
 
     UNIQUE(id),
     PRIMARY KEY(Id),
-    FOREIGN KEY (organisationID) REFERENCES Organisations(organisationID),
-    FOREIGN KEY (userID) REFERENCES Users(userID)
+    FOREIGN KEY (organisation_id) REFERENCES Organisations(organisation_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
 CREATE TABLE IF NOT EXISTS Operations (
     id INT NOT NULL AUTO_INCREMENT,
 
     yotas INT NOT NULL,
-    walletID VARCHAR(300),
+    wallet_id VARCHAR(300),
     operationType ENUM ('buy','receive'),
     approuved BOOLEAN,
     operationHash TEXT,
 
-    createdAt TIMESTAMP,
+    created_at TIMESTAMP,
 
     UNIQUE(operationHash),
     PRIMARY KEY(Id)
-    FOREIGN KEY (walletID) REFERENCES Wallets(walletID),
+    FOREIGN KEY (wallet_id) REFERENCES Wallets(wallet_id),
 );
 
 -- +goose StatementEnd
