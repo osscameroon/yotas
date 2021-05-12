@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS Organisations (
     updatedAt TIMESTAMP,
     deletedAt TIMESTAMP,
 
-    UNIQUE(email, githubID, walletID),
+    UNIQUE(email, githubID),
     PRIMARY KEY(Id)
 );
 
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS Users (
 CREATE TABLE IF NOT EXISTS Wallets (
     id INT NOT NULL AUTO_INCREMENT,
 
-    walletID VARCHAR(300),
+    walletID VARCHAR(300) NOT NULL,
     userID   INT NOT NULL,
     balance INT NOT NULL,
 
@@ -119,6 +119,7 @@ CREATE TABLE IF NOT EXISTS Operations (
     yotas INT NOT NULL,
     walletID VARCHAR(300),
     operationType ENUM ('buy','receive'),
+    approuved BOOLEAN,
     operationHash TEXT,
 
     createdAt TIMESTAMP,
