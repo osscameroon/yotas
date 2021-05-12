@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS Organisations (
     email VARCHAR(150) NOT NULL,
     github_id VARCHAR(150) NOT NULL,
     avatar_url VARCHAR(300),
-    webSite VARCHAR(300),
+    web_site VARCHAR(300),
     `description` VARCHAR(300),
 
     created_at TIMESTAMP,
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS Wallets (
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
 
-    UNIQUE(wallet_id),
+    UNIQUE(id, wallet_id),
     PRIMARY KEY(Id),
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
     FOREIGN KEY (organisation_id) REFERENCES Organisations(organisation_id)
@@ -122,7 +122,7 @@ CREATE TABLE IF NOT EXISTS OrganisationsUsers (
 CREATE TABLE IF NOT EXISTS Operations (
     id INT NOT NULL AUTO_INCREMENT,
 
-    yotas INT NOT NULL,
+    amount INT NOT NULL,
     wallet_id VARCHAR(300),
     operationType ENUM ('buy','receive'),
     approuved BOOLEAN,
