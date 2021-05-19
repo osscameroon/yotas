@@ -2,7 +2,7 @@
 
 ## test: run tests over the entire code base
 test:
-	make lint -C ./backend
+	make test -C ./backend
 
 ## lint: run linters over the entire code base
 lint:
