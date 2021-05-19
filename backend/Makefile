@@ -1,5 +1,7 @@
 BINARYNAME=yotas
 
+.DEFAULT_GOAL := help
+
 run:
 	go run main.go
 
@@ -35,3 +37,8 @@ lint: check-lint
 ## clean: remove binary releases
 clean:
 	rm -rf $(BINARYNAME)
+
+all: help
+help: Makefile
+	@echo " Choose a command..."
+	@sed -n 's/^##//p' $< | column -t -s ':' |  sed -e 's/^/ /'
