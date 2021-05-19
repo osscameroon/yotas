@@ -1,4 +1,4 @@
-package user
+package auth
 
 import (
 	"gorm.io/gorm"
