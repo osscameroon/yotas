@@ -1,7 +1,9 @@
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
+const path = require("path");
+
 module.exports = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
+  title: 'Yotas',
+  tagline: 'Oss\'s monetisation system',
   url: 'https://your-docusaurus-test-site.com',
   baseUrl: '/',
   onBrokenLinks: 'throw',
@@ -11,7 +13,7 @@ module.exports = {
   projectName: 'docusaurus', // Usually your repo name.
   themeConfig: {
     navbar: {
-      title: 'My Site',
+      title: 'Yotas',
       logo: {
         alt: 'My Site Logo',
         src: 'img/logo.svg',
@@ -21,11 +23,11 @@ module.exports = {
           type: 'doc',
           docId: 'intro',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Docs',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
+        {to: '/api', label: 'API', position: 'left'},
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/osscameroon/yotas',
           label: 'GitHub',
           position: 'right',
         },
@@ -38,7 +40,11 @@ module.exports = {
           title: 'Docs',
           items: [
             {
-              label: 'Tutorial',
+              label: 'API',
+              to: '/api'
+            },
+            {
+              label: 'Docs',
               to: '/docs/intro',
             },
           ],
@@ -47,16 +53,16 @@ module.exports = {
           title: 'Community',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+              label: 'Telegram',
+              href: 'https://t.me/joinchat/UpKZh_T3W02LsGvQ',
             },
             {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
+              label: 'Youtube',
+              href: 'https://www.youtube.com/channel/UCo89S8aPpJSXpLxkRjCbRaQ'
             },
             {
               label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
+              href: 'https://twitter.com/osscameroon',
             },
           ],
         },
@@ -65,16 +71,16 @@ module.exports = {
           items: [
             {
               label: 'Blog',
-              to: '/blog',
+              to: 'https://blog.osscameroon.com',
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/osscameroon/yotas',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} OSS Cameroon. Built with Docusaurus.`,
     },
   },
   presets: [
@@ -99,4 +105,7 @@ module.exports = {
       },
     ],
   ],
+  plugins: [
+    path.resolve(__dirname, 'docusaurus-plugin')
+  ]
 };

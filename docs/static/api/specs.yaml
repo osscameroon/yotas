@@ -1,0 +1,204 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Yotas API
+
+servers:
+  - url: http://localhost:8080/v1
+  - url: https://api.yotas.app/v1
+
+security:
+  - bearerAuth: [ ]
+
+x-tagGroups:
+  - name: Auth
+    tags:
+      - Users
+  - name: Organisation
+    tags:
+      - Organisations
+      - Wallets
+      - Operations
+      - Orders
+      - OrderItems
+      - Articles
+
+paths:
+  /user/{userId}:
+    get:
+      tags:
+        - Users
+      description: Retrieve informations of a user
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Users"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Users:
+      type: object
+      required:
+        - name
+        - email
+        - github_id
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        github_id:
+          type: string
+        avatar_url:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+
+    Organisations:
+      type: object
+      required:
+        - name
+        - email
+        - description
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        avatar_url:
+          type: string
+        website:
+          type: string
+        description:
+          type: string
+          maxLength: 2000
+        created_at:
+          type: string
+        updated_at:
+          type: string
+
+    Wallets:
+      type: object
+      required:
+        - organisation_id
+        - wallet_id
+        - user_id
+      properties:
+        id:
+          type: string
+        organisation_id:
+          type: string
+        user_id:
+          type: string
+        wallet_id:
+          type: string
+        balance:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+
+    Operations:
+      type: object
+      required:
+        - wallet_id
+        - operation_type
+        - amount
+      properties:
+        id:
+          type: string
+        wallet_id:
+          type: string
+        amount:
+          type: number
+        operation_type:
+          type: string
+          enum:
+            - debit
+            - credit
+        approved:
+          type: boolean
+        operation_hash:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+
+    OrderItems:
+      type: object
+      required:
+        - wallet_id
+        - article_id
+        - quantity
+      properties:
+        id:
+          type: string
+        wallet_id:
+          type: string
+        article_id:
+          type: string
+        quantity:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+
+    Orders:
+      type: object
+      required:
+        - wallet_id
+        - items
+      properties:
+        id:
+          type: string
+        wallet_id:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItems'
+        created_at:
+          type: string
+        updated_at:
+          type: string
+
+    Articles:
+      type: object
+      required:
+        - name
+        - quantity
+        - price
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        quantity:
+          type: number
+        price:
+          type: number
+        metadata:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
