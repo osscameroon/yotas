@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: 1.0.0
+  version: 0.0.0
   title: Yotas API
 
 servers:
@@ -10,24 +10,138 @@ servers:
 security:
   - bearerAuth: [ ]
 
+
+tags:
+  - name: user_model
+    x-displayName: User
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/Users" exampleRef="#/components/examples/User"/>
+  - name: organisation_model
+    x-displayName: Organisation
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/Organisations" exampleRef="#/components/examples/Organisation"/>
+  - name: organisation_user_model
+    x-displayName: Organisation User
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/OrganisationUsers"/>
+  - name: wallet_model
+    x-displayName: Wallet
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/Wallets"/>
+  - name: operation_model
+    x-displayName: Operation
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/Operations"/>
+  - name: order_model
+    x-displayName: Order
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/Orders"/>
+  - name: order_item_model
+    x-displayName: Order Item
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/OrderItems"/>
+  - name: article_model
+    x-displayName: Article
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/Articles"/>
+
+
+
 x-tagGroups:
-  - name: Auth
+  - name: User Management
     tags:
+      - Auth
       - Users
   - name: Organisation
     tags:
       - Organisations
+      - OrganisationUsers
       - Wallets
       - Operations
       - Orders
       - OrderItems
       - Articles
+  - name: Models
+    tags:
+      - user_model
+      - organisation_model
+      - organisation_user_model
+      - wallet_model
+      - operation_model
+      - order_model
+      - order_item_model
+      - article_model
 
 paths:
+  /auth:
+    get:
+      tags:
+        - Auth
+      summary: Get Redirection URL
+      description: Get authentication URL // TODO - Ecrire une bonne description
+      security: [ ]
+      responses:
+        "200":
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - url
+                properties:
+                  url:
+                    type: string
+    post:
+      tags:
+        - Auth
+      summary: Authenticate
+      description: Login if the account exists, else create a new account
+      security: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - state
+              properties:
+                code:
+                  type: string
+                state:
+                  type: string
+      responses:
+        "200":
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - user
+                  - token
+                properties:
+                  user:
+                    $ref: "#/components/schemas/Users"
+                  token:
+                    type: string
+        "400":
+          description: Invalid state or code
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  messages:
+                    type: array
+                    items:
+                      type: string
   /user/{userId}:
     get:
       tags:
         - Users
+      summary: Retrieve one user
       description: Retrieve informations of a user
       responses:
         "200":
@@ -36,6 +150,140 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Users"
+  /user/{userId}/deactivate:
+    post:
+      tags:
+        - Users
+      summary: Deactivate a user
+      description: Deactivate the account. Deactivated account are deleted after 30 days
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        "200":
+          description: Account deactivated
+        "400":
+          description: Cannot deactivate account when it is the only admin of an organisation
+
+  /oranisations:
+    get:
+      tags:
+        - Organisations
+      description: List all organisations
+      security: [ ]
+      parameters:
+        - $ref: "#/components/parameters/PageLimit"
+        - $ref: "#/components/parameters/PageOffset"
+        - $ref: "#/components/parameters/Search"
+      responses:
+        "200":
+          description: successfull response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  limit:
+                    type: number
+                  offset:
+                    type: number
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#/components/schemas/Organisations"
+
+    post:
+      tags:
+        - Organisations
+      description: Create a new organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Organisations"
+      responses:
+        "200":
+          description: successfull response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organisations"
+        "400":
+          $ref: "#/components/responses/400Error"
+
+  /articles:
+    get:
+      tags:
+        - Articles
+      summary: List Articles
+      security: []
+      description: List all articles on the organisation shop
+      parameters:
+        - $ref: "#/components/parameters/PageLimit"
+        - $ref: "#/components/parameters/PageOffset"
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/Tenant"
+        - name: price_gte
+          in: query
+          description: The minimum price
+          schema:
+            type: number
+        - name: price_lte
+          in: query
+          description: The maximum price
+          schema:
+            type: number
+        - name: category
+          in: query
+          description: Category Id
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: The sorting criteria
+          schema:
+            type: string
+            enum:
+              - date
+              - price
+              - popularity
+              - name
+      responses:
+        "200":
+          description: Successfull Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  limit:
+                    type: number
+                  offset:
+                    type: number
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#/components/schemas/Articles"
+
+  /organisations/{organisationId}:
+    get:
+      tags:
+        - Organisations
+      description: Retrieve organisation infos
+      responses:
+        "200":
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organisations"
 
 components:
   securitySchemes:
@@ -52,19 +300,31 @@ components:
         - github_id
       properties:
         id:
-          type: string
-        name:
-          type: string
-        email:
-          type: string
-        github_id:
-          type: string
-        avatar_url:
-          type: string
+          type: number
+        github_profile:
+          type: object
+          properties:
+            name:
+              type: string
+              description: User name
+            email:
+              type: string
+              description: User email
+            github_id:
+              type: string
+              description: Github handle
+            avatar_url:
+              type: string
+              description: Url of the user github avatar
+        active:
+          type: boolean
+          description: Activation status
         created_at:
           type: string
+          description: Creation datetime
         updated_at:
           type: string
+          description: Last update datetime
 
     Organisations:
       type: object
@@ -74,7 +334,7 @@ components:
         - description
       properties:
         id:
-          type: string
+          type: number
         name:
           type: string
         email:
@@ -86,6 +346,38 @@ components:
         description:
           type: string
           maxLength: 2000
+        number_of_members:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+
+
+
+    OrganisationUsers:
+      type: object
+      required:
+        - organisation_id
+        - user_id
+        - role
+        - active
+      properties:
+        id:
+          type: number
+        organisation_id:
+          type: string
+        user_id:
+          type: string
+        role:
+          type: string
+          enum:
+            - admin
+            - accounter
+            - shoper
+            - regular
+        active:
+          type: boolean
         created_at:
           type: string
         updated_at:
@@ -202,3 +494,65 @@ components:
           type: string
         updated_at:
           type: string
+
+  parameters:
+    PageLimit:
+      name: limit
+      in: query
+      description: Limits the number of items on a page
+      schema:
+        type: integer
+    PageOffset:
+      name: offset
+      in: query
+      description: Specifies the page number to be displayed
+      schema:
+        type: integer
+    Search:
+      name: search
+      in: query
+      description: Specifies the keyword to look for in displayed items
+      schema:
+        type: integer
+    Tenant:
+      name: Tenant
+      in: header
+      description: Id of the organisation for which the request is addressed
+      schema:
+        type: string
+
+  responses:
+    400Error:
+      description: Invalid Request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              messages:
+                type: array
+                items:
+                  type: string
+
+  examples:
+    User:
+      value:
+        id: 1
+        name: John Doe
+        email: john.doe@gmail.com
+        github_id: doejohn
+        avatar_url: https://github.com/doejohn/picture.png
+        created_at: '2021-06-02T16:46:45Z'
+        updated_at: '2021-06-02T16:46:45Z'
+
+    Organisation:
+      value:
+        id: 1
+        name: OSS Cameroon
+        email: osscameroon@gmail.com
+        avatar_url: https://github.com/osscameroon/oss.png
+        website: https://osscameroon.com
+        description: Open source software community driven by cameroonian developers
+        number_of_members: 130
+        created_at: '2021-06-02T16:46:45Z'
+        updated_at: '2021-06-02T16:46:45Z'
