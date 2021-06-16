@@ -7,10 +7,11 @@ import (
 
 type Users struct {
 	gorm.Model
-	Name      string
-	Email     string
-	GithubId  string
-	AvatarUrl string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	Name        string
+	Email       string
+	GithubId    string
+	GithubToken string
+	AvatarUrl   string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
