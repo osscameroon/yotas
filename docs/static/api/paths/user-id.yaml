@@ -1,0 +1,5 @@
+get:
+  description: Retrieve a user
+  responses:
+    '200':
+      description: Successfuly retrieved the user

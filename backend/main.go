@@ -1,15 +1,15 @@
 package main
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/osscameroon/yotas/app"
-	"log"
-	"net/http"
 )
 
 func main() {
-
 	_ = godotenv.Load()
 
 	app.InitEnv()

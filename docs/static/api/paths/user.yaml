@@ -1,0 +1,46 @@
+post:
+  description: Lets a user post a new artist
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - username
+            - email
+          properties:
+            username:
+              type: string
+            email:
+              type: string
+  responses:
+    '200':
+      description: Successfully created a new artist
+
+get:
+  description: Returns a list of users
+  responses:
+    '200':
+      description: Successfully returned a list of users
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - data
+              - count
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+                    email:
+                      type: string
+
+              count:
+                type: number
+
