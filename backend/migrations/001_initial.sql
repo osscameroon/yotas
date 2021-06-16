@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS users (
     `name` VARCHAR(150),
     email VARCHAR(150) NOT NULL,
     github_id VARCHAR(150) NOT NULL,
+    github_token VARCHAR(300) NOT NULL,
     avatar_url VARCHAR(300),
 
     created_at TIMESTAMP,
