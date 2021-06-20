@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/osscameroon/yotas/db"
 	"log"
 	"net/http"
 
@@ -13,6 +14,8 @@ func main() {
 	_ = godotenv.Load()
 
 	app.InitEnv()
+
+	db.Init()
 
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
