@@ -15,11 +15,11 @@ tags:
   - name: user_model
     x-displayName: User
     description: |
-      <SchemaDefinition schemaRef="#/components/schemas/Users" exampleRef="#/components/examples/User"/>
+      <SchemaDefinition schemaRef="#/components/schemas/Users"/>
   - name: organisation_model
     x-displayName: Organisation
     description: |
-      <SchemaDefinition schemaRef="#/components/schemas/Organisations" exampleRef="#/components/examples/Organisation"/>
+      <SchemaDefinition schemaRef="#/components/schemas/Organisations"/>
   - name: organisation_user_model
     x-displayName: Organisation User
     description: |
@@ -44,6 +44,7 @@ tags:
     x-displayName: Article
     description: |
       <SchemaDefinition schemaRef="#/components/schemas/Articles"/>
+
 
 
 
@@ -137,7 +138,8 @@ paths:
                     type: array
                     items:
                       type: string
-  /user/{userId}:
+
+  /users/{userId}:
     get:
       tags:
         - Users
@@ -150,7 +152,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Users"
-  /user/{userId}/deactivate:
+        "404":
+          $ref: "#/components/responses/404Error"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+
+  /users/{userId}/deactivate:
     post:
       tags:
         - Users
@@ -169,6 +178,12 @@ paths:
           description: Account deactivated
         "400":
           description: Cannot deactivate account when it is the only admin of an organisation
+        "404":
+          $ref: "#/components/responses/404Error"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
 
   /oranisations:
     get:
@@ -271,6 +286,96 @@ paths:
                     items:
                       type: object
                       $ref: "#/components/schemas/Articles"
+        "400":
+          $ref: "#/components/responses/400TenantError"
+
+    post:
+      tags:
+        -  Articles
+      description: Create an Article
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Articles"
+      responses:
+        "200":
+          description: Article Created Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Articles"
+        "400":
+          $ref: "#/components/responses/400TenantError"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+
+  /article/{articleId}/:
+    get:
+      tags:
+        - Articles
+      security: []
+      description: Retrieve an Article
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+      responses:
+        "200":
+          description: Successfull Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Articles"
+        "400":
+          $ref: "#/components/responses/400TenantError"
+        "404":
+          $ref: "#/components/responses/404Error"
+
+    put:
+      tags:
+        - Articles
+      description: Update the Article
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Articles"
+      responses:
+        "200":
+          description: Successfulll Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Articles"
+        "400":
+          $ref: "#/components/responses/400TenantError"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+        "404":
+          $ref: "#/components/responses/404Error"
+
+    delete:
+      tags:
+        - Articles
+      description: Delete an Article
+      responses:
+        "200":
+          description: Article Deleted
+        "400":
+          $ref: "#/components/responses/400TenantError"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+        "404":
+          $ref: "#/components/responses/404Error"
 
   /organisations/{organisationId}:
     get:
@@ -284,6 +389,194 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Organisations"
+
+  /orders:
+    post:
+      tags:
+        - Orders
+      description: Create a new Order
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Orders"
+      responses:
+        "200":
+          description: Order Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Orders"
+        "400":
+          $ref: "#/components/responses/400Error"
+        "401":
+          $ref: "#/components/responses/401Error"
+
+    get:
+      description: List orders of an organisation
+      tags:
+        - Orders
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+        - $ref: "#/components/parameters/PageLimit"
+        - $ref: "#/components/parameters/PageOffset"
+        - $ref: "#/components/parameters/Search"
+      responses:
+        "200":
+          description: Orders fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  limit:
+                    type: number
+                  offset:
+                    type: number
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#/components/schemas/Orders"
+        "400":
+          $ref: "#/components/responses/400TenantError"
+        "401":
+          $ref: "#/components/responses/401Error"
+
+  /orders/{orderId}:
+    get:
+      description: Retrieve an Order
+      tags:
+        - Orders
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+      responses:
+        "200":
+          description: Order retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Orders"
+        "400":
+          $ref: "#/components/responses/400TenantError"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+        "404":
+          $ref: "#/components/responses/404Error"
+
+    put:
+      summary: Update an oder
+      description: |
+        - They can update an order if it is not yet paid
+      tags:
+        - Orders
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Orders"
+      responses:
+        "200":
+          description: "Order updated successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Orders"
+        "400":
+          $ref: "#/components/responses/400TenantError"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+        "404":
+          $ref: "#/components/responses/404Error"
+
+    delete:
+      summary: Delete the order
+      description: |
+        - An order can be delete if it is canceled or it is not yet paid
+        - Only the owner of the command or an admin can delete an order
+      tags:
+        - Orders
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+      responses:
+        "200":
+          description: Order deleted
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+        "404":
+          $ref: "#/components/responses/404Error"
+
+  /orders/{orderId}/pay:
+    post:
+      tags:
+        - Orders
+      summary: Pay an order
+      description: |
+        The user that create the order can perform this action, when it is done it walled is debited
+        of the order total amount
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+      requestBody:
+        content:
+          application/json:
+            schema: {}
+      responses:
+        "200":
+          description: Payment processed successfully
+        "400":
+          $ref: "#/components/responses/400Error"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+        "404":
+          $ref: "#/components/responses/404Error"
+
+  /orders/{orderId}/process:
+    post:
+      summary: Process an order
+      description: |
+        This endpoint is used by an admin to reject or accept an order.
+        If the order is rejected, we refund the owner of the order
+      tags:
+        - Orders
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - accepted
+              properties:
+                reason:
+                  type: string
+                  example: ok
+                accepted:
+                  type: boolean
+                  example: true
+      responses:
+        "200":
+          description: Order processed
+        "400":
+          $ref: "#/components/responses/400TenantError"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+        "404":
+          $ref: "#/components/responses/404Error"
 
 components:
   securitySchemes:
@@ -301,30 +594,41 @@ components:
       properties:
         id:
           type: number
+          readOnly: true
+          example: 1
         github_profile:
           type: object
           properties:
             name:
               type: string
               description: User name
+              example: John Doe
             email:
               type: string
               description: User email
+              example: john.doe@gmail.com
             github_id:
               type: string
               description: Github handle
+              example: johndoe
             avatar_url:
               type: string
               description: Url of the user github avatar
+              example: https://avatars.githubusercontent.com/u/32160720
         active:
           type: boolean
           description: Activation status
+          example: true
         created_at:
           type: string
-          description: Creation datetime
+          description: Creation ISO datetime
+          example: '2021-06-02T16:46:45-01:00'
+          readOnly: true
         updated_at:
           type: string
-          description: Last update datetime
+          description: Last update ISO datetime
+          example: '2021-06-02T16:46:45-01:00'
+          readOnly: true
 
     Organisations:
       type: object
@@ -335,25 +639,37 @@ components:
       properties:
         id:
           type: number
+          readOnly: true
+          example: 1
         name:
           type: string
+          example: OSS Cameroon
         email:
           type: string
-        avatar_url:
+          example: osscameroon@gmail.com
+        logo:
           type: string
+          example: https://avatars.githubusercontent.com/u/73784866
         website:
           type: string
+          example: https://osscameroon.com
         description:
           type: string
           maxLength: 2000
+          example: Open source society driven by cameroonian developers
         number_of_members:
           type: number
+          description: Number of user in the organisation on Yotas
+          readOnly: true
+          example: 30
         created_at:
           type: string
+          example: '2021-06-12T12:06:30-01:00'
+          readOnly: true
         updated_at:
           type: string
-
-
+          example: '2021-06-12T12:06:30-01:00'
+          readOnly: true
 
     OrganisationUsers:
       type: object
@@ -365,8 +681,12 @@ components:
       properties:
         id:
           type: number
+          readOnly: true
+          example: 1
         organisation_id:
           type: string
+          example: 1
+          readOnly: true
         user_id:
           type: string
         role:
@@ -376,12 +696,18 @@ components:
             - accounter
             - shoper
             - regular
+          example: admin
         active:
           type: boolean
+          example: true
         created_at:
           type: string
+          readOnly: true
+          example: '2021-06-12T12:40:01-01:00'
         updated_at:
           type: string
+          readOnly: true
+          example: '2021-06-12T12:40:01-01:00'
 
     Wallets:
       type: object
@@ -392,18 +718,30 @@ components:
       properties:
         id:
           type: string
+          readOnly: true
         organisation_id:
           type: string
+          readOnly: true
+          example: 4
         user_id:
           type: string
+          readOnly: true
+          example: 2
         wallet_id:
           type: string
+          readOnly: true
         balance:
           type: number
+          example: 45
+          readOnly: true
         created_at:
           type: string
+          readOnly: true
+          example: '2021-06-12T12:40:01-01:00'
         updated_at:
           type: string
+          readOnly: true
+          example: '2021-06-12T12:40:01-01:00'
 
     Operations:
       type: object
@@ -414,8 +752,10 @@ components:
       properties:
         id:
           type: string
+          readOnly: true
         wallet_id:
           type: string
+          readOnly: true
         amount:
           type: number
         operation_type:
@@ -429,28 +769,52 @@ components:
           type: string
         created_at:
           type: string
+          readOnly: true
+          example: '2021-06-12T12:40:01-01:00'
         updated_at:
           type: string
+          readOnly: true
+          example: '2021-06-12T12:40:01-01:00'
 
     OrderItems:
       type: object
       required:
-        - wallet_id
         - article_id
         - quantity
       properties:
         id:
           type: string
-        wallet_id:
-          type: string
+          readOnly: true
+          example: 1
         article_id:
           type: string
+          example: 4
+        article:
+          type: object
+          readOnly: true
+          properties:
+            name:
+              type: string
+              example: Oss stickers
+            quantity:
+              type: string
+              description: Left in stocks
+              example: 10
+            picture_url:
+              type: string
+              description: small picture url
+              example: https://storage.yotas.app/small.png
         quantity:
-          type: string
+          type: number
+          example: 2
         created_at:
           type: string
+          readOnly: true
+          example: '2021-06-12T12:40:01-01:00'
         updated_at:
           type: string
+          readOnly: true
+          example: '2021-06-12T12:40:01-01:00'
 
     Orders:
       type: object
@@ -459,17 +823,24 @@ components:
         - items
       properties:
         id:
-          type: string
+          type: number
+          readOnly: true
+          example: 1
         wallet_id:
-          type: string
+          type: number
+          example: 2
         items:
           type: array
           items:
             $ref: '#/components/schemas/OrderItems'
         created_at:
           type: string
+          readOnly: true
+          example: '2021-06-12T12:40:01-01:00'
         updated_at:
           type: string
+          readOnly: true
+          example: '2021-06-12T12:40:01-01:00'
 
     Articles:
       type: object
@@ -479,21 +850,52 @@ components:
         - price
       properties:
         id:
-          type: string
+          type: number
+          readOnly: True
+          example: 1
         name:
           type: string
+          example: Oss Stickers
         description:
           type: string
+          example: Stickers for Oss open source projects
         quantity:
           type: number
+          example: 10
         price:
           type: number
+          example: 5
+        pictures:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 1
+              url:
+                readOnly: true
+                type: string
+                example: https://storage.yotas.app/stickers.jpg
+              scale:
+                type: string
+                readOnly: True
+                enum:
+                  - small
+                  - medium
+                  - large
+                  - orginal
+                example: small
         metadata:
           type: string
         created_at:
           type: string
+          readOnly: true
+          example: '2021-06-12T12:40:01-01:00'
         updated_at:
           type: string
+          readOnly: true
+          example: '2021-06-12T12:40:01-01:00'
 
   parameters:
     PageLimit:
@@ -516,6 +918,7 @@ components:
         type: integer
     Tenant:
       name: Tenant
+      required: true
       in: header
       description: Id of the organisation for which the request is addressed
       schema:
@@ -523,7 +926,7 @@ components:
 
   responses:
     400Error:
-      description: Invalid Request
+      description: Bad Request
       content:
         application/json:
           schema:
@@ -533,26 +936,11 @@ components:
                 type: array
                 items:
                   type: string
-
-  examples:
-    User:
-      value:
-        id: 1
-        name: John Doe
-        email: john.doe@gmail.com
-        github_id: doejohn
-        avatar_url: https://github.com/doejohn/picture.png
-        created_at: '2021-06-02T16:46:45Z'
-        updated_at: '2021-06-02T16:46:45Z'
-
-    Organisation:
-      value:
-        id: 1
-        name: OSS Cameroon
-        email: osscameroon@gmail.com
-        avatar_url: https://github.com/osscameroon/oss.png
-        website: https://osscameroon.com
-        description: Open source software community driven by cameroonian developers
-        number_of_members: 130
-        created_at: '2021-06-02T16:46:45Z'
-        updated_at: '2021-06-02T16:46:45Z'
+    401Error:
+      description: Access token is missing or invalid
+    403Error:
+      description: Access forbidden
+    404Error:
+      description: Resource not  found
+    400TenantError:
+      description: You must provide Tenant (organisation Id) on Header
