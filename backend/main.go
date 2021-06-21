@@ -29,7 +29,7 @@ func main() {
 		c.String(http.StatusOK, "Yotas")
 	})
 
-	log.Println("HTTP Server Started on port", app.Env.HttpPort)
+	log.Println("HTTP Server Started on port ", app.Env.HttpPort)
 	err := router.Run(":" + app.Env.HttpPort)
 	log.Fatal(err)
 }
