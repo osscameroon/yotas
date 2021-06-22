@@ -2,10 +2,11 @@ package db
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/osscameroon/yotas/app"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
 )
 
 //Session is the instance of the database connection
