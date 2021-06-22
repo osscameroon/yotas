@@ -1,12 +1,14 @@
 package organisation
 
-import "github.com/gorilla/mux"
+import (
+	"github.com/osscameroon/yotas/app"
+)
 
-func OrganisationRouter() *mux.Router {
-	r := mux.NewRouter()
+func OrganisationRouter() {
+	router := app.GetApiRouter()
 
-	r.HandleFunc("/organisations", OrganisationsAllHandler).Methods("GET", "POST")
-	r.HandleFunc("/organisations/{organisation_id}", OrganisationsHandler).Methods("GET", "PATCH")
-
-	return r
+	router.GET("/organisations", OrganisationsAllHandler)
+	router.POST("/organisations", OrganisationsAllHandler)
+	router.GET("/organisations/{organisation_id}", OrganisationsHandler)
+	router.PATCH("/organisations/{organisation_id}", OrganisationsHandler)
 }

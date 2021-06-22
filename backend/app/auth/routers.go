@@ -1,12 +1,13 @@
 package auth
 
-import "github.com/gorilla/mux"
+import (
+	"github.com/osscameroon/yotas/app"
+)
 
-func AuthRouter() *mux.Router {
-	r := mux.NewRouter()
+func AuthRouter() {
+	router := app.GetApiRouter()
 
-	r.HandleFunc("/login", LoginHandler).Methods("POST")
-	r.HandleFunc("/github/login", GithubCallbackHandler).Methods("GET", "POST")
-
-	return r
+	router.POST("/login", LoginHandler)
+	router.GET("/github/login", GithubCallbackHandler)
+	router.POST("/github/login", GithubCallbackHandler)
 }

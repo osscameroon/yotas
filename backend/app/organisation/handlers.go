@@ -1,11 +1,13 @@
 package organisation
 
-import "net/http"
+import (
+	"github.com/gin-gonic/gin"
+)
 
-func OrganisationsAllHandler(w http.ResponseWriter, r *http.Request) {
+func OrganisationsAllHandler(ctx *gin.Context) {
 
 }
 
-func OrganisationsHandler(w http.ResponseWriter, r *http.Request) {
+func OrganisationsHandler(ctx *gin.Context) {
 
 }

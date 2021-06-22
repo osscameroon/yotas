@@ -1,11 +1,13 @@
 package auth
 
-import "net/http"
+import (
+	"github.com/gin-gonic/gin"
+)
 
-func LoginHandler(w http.ResponseWriter, r *http.Request) {
+func LoginHandler(ctx *gin.Context) {
 
 }
 
-func GithubCallbackHandler(w http.ResponseWriter, r *http.Request) {
+func GithubCallbackHandler(ctx *gin.Context) {
 
 }
