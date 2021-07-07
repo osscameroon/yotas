@@ -284,7 +284,7 @@ paths:
       tags:
         - Pictures
       summary: Retrieve a picture
-      security: []
+      security: [ ]
       responses:
         "200":
           description: Picture retrieved
@@ -300,7 +300,7 @@ paths:
       tags:
         - Articles
       summary: List Articles
-      security: []
+      security: [ ]
       description: List all articles on the organisation shop
       parameters:
         - $ref: "#/components/parameters/PageLimit"
@@ -354,7 +354,7 @@ paths:
 
     post:
       tags:
-        -  Articles
+        - Articles
       description: Create an Article
       parameters:
         - $ref: "#/components/parameters/Tenant"
@@ -381,7 +381,7 @@ paths:
     get:
       tags:
         - Articles
-      security: []
+      security: [ ]
       description: Retrieve an Article
       parameters:
         - $ref: "#/components/parameters/Tenant"
@@ -592,7 +592,7 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: {}
+            schema: { }
       responses:
         "200":
           description: Payment processed successfully
@@ -646,7 +646,7 @@ paths:
       description: List contributions
       tags:
         - Contributions
-      security: []
+      security: [ ]
       parameters:
         - $ref: "#/components/parameters/Tenant"
         - $ref: "#/components/parameters/Search"
@@ -659,14 +659,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Contributions"
+                type: object
+                properties:
+                  limit:
+                    type: number
+                  offset:
+                    type: number
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Contributions"
         "400":
           $ref: "#/components/responses/400TenantError"
 
   /contributions/{contributionId}:
     get:
       description: Retrieve a contribution
-      security: []
+      security: [ ]
       tags:
         - Contributions
       parameters:
@@ -728,7 +737,7 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: {}
+            schema: { }
       responses:
         "200":
           description: Wallet Credited
@@ -748,6 +757,61 @@ paths:
           $ref: "#/components/responses/403Error"
         "404":
           $ref: "#/components/responses/404Error"
+
+  /wallet:
+    get:
+      tags:
+        - Wallets
+      summary: Retrieve user wallet
+      description: Get the wallet of a user for a specific organisation
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+      responses:
+        "200":
+          description: Wallet retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Wallets"
+        "400":
+          $ref: "#/components/responses/400TenantError"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+
+  /operations:
+    get:
+      summary: List operations of a user
+      description: List operations perform on a user wallet in an organisation
+      tags:
+        - Operations
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+        - $ref: "#/components/parameters/PageOffset"
+        - $ref: "#/components/parameters/PageLimit"
+      responses:
+        "200":
+          description: Operations retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offset:
+                    type: number
+                  limit:
+                    type: number
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Operations"
+        "400":
+          $ref: "#/components/responses/400TenantError"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
 
 components:
   securitySchemes:
