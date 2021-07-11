@@ -1,10 +1,11 @@
 package main
 
 import (
+	"github.com/osscameroon/yotas/app/auth"
+	"github.com/osscameroon/yotas/app/organisation"
+	"github.com/osscameroon/yotas/db"
 	"log"
-	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/osscameroon/yotas/app"
 )
@@ -14,18 +15,18 @@ func main() {
 
 	app.InitEnv()
 
-	gin.SetMode(gin.ReleaseMode)
-	router := gin.Default()
+	db.Init()
 
-	// ─── API ROUTER ────────────────────────────────────────────────────
-	apiRouter := router.Group("/api")
+	// Init global router
+	app.InitRouter()
 
-	apiRouterV1 := apiRouter.Group("/v1")
-	apiRouterV1.GET("", func(c *gin.Context) {
-		c.String(http.StatusOK, "Yotas")
-	})
+	//Init other module router to bind with global router
+	auth.AuthRouter()
+	organisation.OrganisationRouter()
 
 	log.Println("HTTP Server Started on port ", app.Env.HttpPort)
-	err := router.Run(":" + app.Env.HttpPort)
-	log.Fatal(err)
+	err := app.GetRouter().Run(":" + app.Env.HttpPort)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
