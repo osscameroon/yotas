@@ -44,6 +44,14 @@ tags:
     x-displayName: Article
     description: |
       <SchemaDefinition schemaRef="#/components/schemas/Articles"/>
+  - name: picture_model
+    x-displayName: Pictures
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/Pictures"/>
+  - name: contributions_model
+    x-displayName: Contributions
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/Contributions"/>
 
 
 
@@ -62,6 +70,8 @@ x-tagGroups:
       - Orders
       - OrderItems
       - Articles
+      - Pictures
+      - Contributions
   - name: Models
     tags:
       - user_model
@@ -72,6 +82,8 @@ x-tagGroups:
       - order_model
       - order_item_model
       - article_model
+      - picture_model
+      - contributions_model
 
 paths:
   /auth:
@@ -232,12 +244,63 @@ paths:
         "400":
           $ref: "#/components/responses/400Error"
 
+  /pictures:
+    post:
+      tags:
+        - Pictures
+      summary: Create a picture
+      description: Upload a picture on the system
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+                - alt_text
+              properties:
+                file:
+                  type: object
+                alt_text:
+                  type: string
+      responses:
+        "200":
+          description: Picture created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pictures"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+        "400":
+          $ref: "#/components/responses/400Error"
+
+  /pictures/{picture_id}:
+    get:
+      tags:
+        - Pictures
+      summary: Retrieve a picture
+      security: [ ]
+      responses:
+        "200":
+          description: Picture retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pictures"
+        "404":
+          $ref: "#/components/responses/404Error"
+
   /articles:
     get:
       tags:
         - Articles
       summary: List Articles
-      security: []
+      security: [ ]
       description: List all articles on the organisation shop
       parameters:
         - $ref: "#/components/parameters/PageLimit"
@@ -291,7 +354,7 @@ paths:
 
     post:
       tags:
-        -  Articles
+        - Articles
       description: Create an Article
       parameters:
         - $ref: "#/components/parameters/Tenant"
@@ -318,7 +381,7 @@ paths:
     get:
       tags:
         - Articles
-      security: []
+      security: [ ]
       description: Retrieve an Article
       parameters:
         - $ref: "#/components/parameters/Tenant"
@@ -529,7 +592,7 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: {}
+            schema: { }
       responses:
         "200":
           description: Payment processed successfully
@@ -577,6 +640,178 @@ paths:
           $ref: "#/components/responses/403Error"
         "404":
           $ref: "#/components/responses/404Error"
+
+  /contributions:
+    get:
+      description: List contributions
+      tags:
+        - Contributions
+      security: [ ]
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/PageLimit"
+        - $ref: "#/components/parameters/PageOffset"
+        - $ref: "#/components/parameters/User"
+      responses:
+        "200":
+          description: Contributions retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  limit:
+                    type: number
+                  offset:
+                    type: number
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Contributions"
+        "400":
+          $ref: "#/components/responses/400TenantError"
+
+  /contributions/{contributionId}:
+    get:
+      description: Retrieve a contribution
+      security: [ ]
+      tags:
+        - Contributions
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+      responses:
+        "200":
+          description: Contribution Retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contributions"
+        "400":
+          $ref: "#/components/responses/400TenantError"
+        "404":
+          $ref: "#/components/responses/404Error"
+
+  /contributions/{contributionId}/set_yotas:
+    post:
+      summary: Attribute yotas to a contribution
+      description: Define the amount of yotas that will be rewarded to the contributor
+      tags:
+        - Contributions
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+              properties:
+                amount:
+                  type: number
+                  example: 25
+      responses:
+        "200":
+          description: Yotas seted
+        "404":
+          $ref: "#/components/responses/404Error"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+        "400":
+          $ref: "#/components/responses/400TenantError"
+
+  /contributions/{contributionId}/reward:
+    post:
+      summary: Reward Contributor
+      description: |
+        Credit the wallet of the contributor with the amount of yotas associated to the contribution
+        After the operation the contribution must be marked rewarded
+        If a contribution has already been rewarded a 400 error is returned
+      tags:
+        - Contributions
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+      requestBody:
+        content:
+          application/json:
+            schema: { }
+      responses:
+        "200":
+          description: Wallet Credited
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Wallet credited
+        "400":
+          $ref: "#/components/responses/400TenantError"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+        "404":
+          $ref: "#/components/responses/404Error"
+
+  /wallet:
+    get:
+      tags:
+        - Wallets
+      summary: Retrieve user wallet
+      description: Get the wallet of a user for a specific organisation
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+      responses:
+        "200":
+          description: Wallet retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Wallets"
+        "400":
+          $ref: "#/components/responses/400TenantError"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+
+  /operations:
+    get:
+      summary: List operations of a user
+      description: List operations perform on a user wallet in an organisation
+      tags:
+        - Operations
+      parameters:
+        - $ref: "#/components/parameters/Tenant"
+        - $ref: "#/components/parameters/PageOffset"
+        - $ref: "#/components/parameters/PageLimit"
+      responses:
+        "200":
+          description: Operations retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offset:
+                    type: number
+                  limit:
+                    type: number
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Operations"
+        "400":
+          $ref: "#/components/responses/400TenantError"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
 
 components:
   securitySchemes:
@@ -842,6 +1077,40 @@ components:
           readOnly: true
           example: '2021-06-12T12:40:01-01:00'
 
+    Pictures:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        organisation_id:
+          readOnly: true
+          type: number
+          example: 1
+        alt_text:
+          type: string
+          example: oss cameroon sticker image
+        original:
+          readOnly: true
+          type: string
+          description: URL of the original picture sent by user
+          example: https://storage.yotas.app/original.png
+        small:
+          type: string
+          readOnly: true
+          description: URL of the small version of the picture
+          example: https://storage.yotas.app/small.png
+        medium:
+          type: string
+          readOnly: true
+          description: URL of the medium version of the picture
+          example: https://storage.yotas.app/medium.png
+        large:
+          type: string
+          readOnly: true
+          description: URL of the large version of the picture
+          example: https://storage.yotas.app/large.png
+
     Articles:
       type: object
       required:
@@ -868,24 +1137,8 @@ components:
         pictures:
           type: array
           items:
-            type: object
-            properties:
-              id:
-                type: number
-                example: 1
-              url:
-                readOnly: true
-                type: string
-                example: https://storage.yotas.app/stickers.jpg
-              scale:
-                type: string
-                readOnly: True
-                enum:
-                  - small
-                  - medium
-                  - large
-                  - orginal
-                example: small
+            $ref: "#/components/schemas/Pictures"
+
         metadata:
           type: string
         created_at:
@@ -896,6 +1149,42 @@ components:
           type: string
           readOnly: true
           example: '2021-06-12T12:40:01-01:00'
+
+    Contributions:
+      type: object
+      required:
+        - author
+        - type
+        - repository_id
+        - date
+        - github_link
+      properties:
+        id:
+          type: number
+          example: 1
+        organisation_id:
+          type: number
+          example: 1
+        author:
+          $ref: "#/components/schemas/Users"
+        type:
+          type: string
+          enum:
+            - pull_request
+            - issue
+          example: issue
+        date:
+          type: string
+          example: "2021-07-08T08:09:01+00:00"
+        github_link:
+          type: string
+          example: https://github.com/osscameroon/yotas/issues/1
+        yotas_attributed:
+          type: number
+          example: 25
+        rewarded:
+          type: boolean
+          example: false
 
   parameters:
     PageLimit:
@@ -921,6 +1210,13 @@ components:
       required: true
       in: header
       description: Id of the organisation for which the request is addressed
+      schema:
+        type: string
+    User:
+      name: user
+      required: false
+      in: query
+      description: Filter with user ID
       schema:
         type: string
 
