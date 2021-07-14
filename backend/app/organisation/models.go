@@ -74,7 +74,7 @@ type Articles struct {
 	UpdatedAt   time.Time
 }
 
-type Picture struct {
+type Pictures struct {
 	gorm.Model
 	OrganisationId uint
 	AltText        string
