@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS organisations (
     updated_at TIMESTAMP,
 
     UNIQUE(email, github_id),
-    PRIMARY KEY(Id)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS users (
@@ -46,9 +46,9 @@ CREATE TABLE IF NOT EXISTS wallets (
     updated_at TIMESTAMP,
 
     UNIQUE(id, wallet_id),
-    PRIMARY KEY(Id),
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (organisation_id) REFERENCES Organisations(organisation_id)
+    PRIMARY KEY(id),
+    FOREIGN KEY (user_id) REFERENCES Users (id),
+    FOREIGN KEY (organisation_id) REFERENCES Organisations (id)
 );
 
 CREATE TABLE IF NOT EXISTS articles (
@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS orders (
     UNIQUE(id),
     PRIMARY KEY(Id),
     FOREIGN KEY (wallet_id) REFERENCES Wallets(wallet_id),
-    FOREIGN KEY (article_id) REFERENCES Articles(article_id)
+    FOREIGN KEY (article_id) REFERENCES Articles(id)
 );
 
 CREATE TABLE IF NOT EXISTS organisations_articles (
@@ -94,8 +94,8 @@ CREATE TABLE IF NOT EXISTS organisations_articles (
 
     UNIQUE(id),
     PRIMARY KEY(Id),
-    FOREIGN KEY (organisation_id) REFERENCES Organisations(organisation_id),
-    FOREIGN KEY (article_id) REFERENCES Articles(article_id)
+    FOREIGN KEY (organisation_id) REFERENCES Organisations (id),
+    FOREIGN KEY (article_id) REFERENCES Articles (id)
 );
 
 CREATE TABLE IF NOT EXISTS organisations_users (
@@ -110,8 +110,8 @@ CREATE TABLE IF NOT EXISTS organisations_users (
 
     UNIQUE(id),
     PRIMARY KEY(Id),
-    FOREIGN KEY (organisation_id) REFERENCES Organisations(organisation_id),
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    FOREIGN KEY (organisation_id) REFERENCES Organisations (id),
+    FOREIGN KEY (user_id) REFERENCES Users (id)
 );
 
 CREATE TABLE IF NOT EXISTS operations (
@@ -120,14 +120,45 @@ CREATE TABLE IF NOT EXISTS operations (
     amount INT NOT NULL,
     wallet_id VARCHAR(300),
     operation_type ENUM ('buy','receive'),
-    approuved BOOLEAN,
+    approved       BOOLEAN,
     operation_hash TEXT,
 
     created_at TIMESTAMP,
 
     UNIQUE(operation_hash),
-    PRIMARY KEY(Id)
+    PRIMARY KEY(id),
     FOREIGN KEY (wallet_id) REFERENCES Wallets(wallet_id),
+);
+
+CREATE TABLE IF NOT EXISTS pictures (
+    id  INT NOT NULL AUTO_INCREMENT,
+
+    organisation_id INT NOT NULL,
+
+    alt_text TEXT,
+    original TEXT,
+    small TEXT,
+    medium TEXT,
+    large TEXT,
+    created_at TIMESTAMP,
+
+    UNIQUE(id),
+    PRIMARY KEY(id),
+    FOREIGN KEY (organisation_id) REFERENCES Organisations(id),
+);
+
+CREATE TABLE IF NOT EXISTS articles_pictures(
+    id INT NOT NULL AUTO_INCREMENT,
+
+    picture_id INT NOT NULL,
+    article_id INT NOT NULL,
+
+    created_at TIMESTAMP,
+
+    UNIQUE(id),
+    PRIMARY KEY(id),
+    FOREIGN KEY (article_id) REFERENCES articles(id),
+    FOREIGN KEY (picture_id) REFERENCES pictures(id),
 );
 
 -- +goose StatementEnd
@@ -143,4 +174,6 @@ DROP TABLE orders;
 DROP TABLE organisations_articles;
 DROP TABLE organisations_users;
 DROP TABLE operations;
+DROP TABLE pictures;
+DROP TABLE articles_pictures;
 -- +goose StatementEnd
