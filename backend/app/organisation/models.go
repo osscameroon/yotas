@@ -19,16 +19,16 @@ type Organisations struct {
 
 type OrganisationsArticles struct {
 	gorm.Model
-	OrganisationId int64
-	ArticleId      int64
+	OrganisationId uint
+	ArticleId      uint
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 }
 
 type OrganisationsUsers struct {
 	gorm.Model
-	OrganisationId int64
-	UserId         int64
+	OrganisationId uint
+	UserId         uint
 	Active         bool
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
@@ -37,8 +37,8 @@ type OrganisationsUsers struct {
 type Wallets struct {
 	gorm.Model
 	WalletId       string
-	UserId         int64
-	OrganisationId int64
+	UserId         uint
+	OrganisationId uint
 	Balance        int64
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
@@ -57,7 +57,7 @@ type Operations struct {
 type Orders struct {
 	gorm.Model
 	WalletId  string
-	ArticleId int64
+	ArticleId uint
 	Quantity  int64
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -72,4 +72,20 @@ type Articles struct {
 	Metadata    string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+}
+
+type Pictures struct {
+	gorm.Model
+	OrganisationId uint
+	AltText        string
+	Original       string
+	Small          string
+	Medium         string
+	Large          string
+}
+
+type ArticlesPictures struct {
+	gorm.Model
+	PictureId uint
+	ArticleId uint
 }
