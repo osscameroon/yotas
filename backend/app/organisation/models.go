@@ -1,91 +1,77 @@
 package organisation
 
 import (
-	"gorm.io/gorm"
-	"time"
+	"github.com/osscameroon/yotas/db"
 )
 
 type Organisations struct {
-	gorm.Model
-	Name        string
-	Email       string
-	GithubId    string
-	AvatarUrl   string
-	WebSite     string
-	Description string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	db.Model
+	Name        string `json:"name"`
+	Email       string `json:"email"`
+	GithubId    string `json:"github_id"`
+	AvatarUrl   string `json:"avatar_url"`
+	WebSite     string `json:"web_site"`
+	Description string `json:"description"`
 }
 
 type OrganisationsArticles struct {
-	gorm.Model
-	OrganisationId uint
-	ArticleId      uint
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	db.Model
+	OrganisationId uint `json:"organisation_id"`
+	ArticleId      uint `json:"article_id"`
 }
 
 type OrganisationsUsers struct {
-	gorm.Model
-	OrganisationId uint
-	UserId         uint
-	Active         bool
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	db.Model
+	OrganisationId uint `json:"organisation_id"`
+	UserId         uint `json:"user_id"`
+	Active         bool `json:"active"`
 }
 
 type Wallets struct {
-	gorm.Model
-	WalletId       string
-	UserId         uint
-	OrganisationId uint
-	Balance        int64
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	db.Model
+	WalletId       string `json:"wallet_id"`
+	UserId         uint   `json:"user_id"`
+	OrganisationId uint   `json:"organisation_id"`
+	Balance        int64  `json:"balance"`
 }
 
 type Operations struct {
-	gorm.Model
-	Amount        int64
-	WalletId      string
-	OperationType string
-	Approved      bool
-	OperationHash string
-	CreatedAt     time.Time
+	db.Model
+	Amount        int64  `json:"amount"`
+	WalletId      string `json:"wallet_id"`
+	OperationType string `json:"operation_type"`
+	Approved      bool   `json:"approved"`
+	OperationHash string `json:"operation_hash"`
 }
 
 type Orders struct {
-	gorm.Model
-	WalletId  string
-	ArticleId uint
-	Quantity  int64
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	db.Model
+	WalletId  string `json:"wallet_id"`
+	ArticleId uint   `json:"article_id"`
+	Quantity  int64  `json:"quantity"`
 }
 
 type Articles struct {
-	gorm.Model
-	Name        string
-	Description string
-	Quantity    int64
-	Price       int64
-	Metadata    string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	db.Model
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Quantity    int64  `json:"quantity"`
+	Price       int64  `json:"price"`
+	Metadata    string `json:"metadata"`
 }
 
 type Pictures struct {
-	gorm.Model
-	OrganisationId uint
-	AltText        string
-	Original       string
-	Small          string
-	Medium         string
-	Large          string
+	db.Model
+	OrganisationId uint   `json:"organisation_id"`
+	AltText        string `json:"alt_text"`
+	Original       string `json:"original"`
+	Small          string `json:"small"`
+	Medium         string `json:"medium"`
+	Large          string `json:"large"`
 }
 
 type ArticlesPictures struct {
-	gorm.Model
-	PictureId uint
-	ArticleId uint
+	db.Model
+	PictureId uint `json:"picture_id"`
+	ArticleId uint `json:"article_id"`
 }
