@@ -4,9 +4,16 @@ import "./index.scss";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
+import { ChakraProvider } from "@chakra-ui/react";
+import LocaleProvider from "./locale/LocaleProvider";
+
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ChakraProvider>
+      <LocaleProvider>
+        <App />
+      </LocaleProvider>
+    </ChakraProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

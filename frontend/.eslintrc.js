@@ -5,8 +5,6 @@ module.exports = {
       "eslint:recommended",
       "plugin:react/recommended",
       "plugin:@typescript-eslint/recommended",
-      // Uncomment the following lines to enable eslint-config-prettier
-      // Is not enabled right now to avoid issues with the Next.js repo
       "plugin:prettier/recommended",
     ],
     env: {
