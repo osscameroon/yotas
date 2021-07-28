@@ -75,19 +75,3 @@ type ArticlesPictures struct {
 	PictureId uint `json:"picture_id"`
 	ArticleId uint `json:"article_id"`
 }
-
-type Pictures struct {
-	gorm.Model
-	OrganisationId uint
-	AltText        string
-	Original       string
-	Small          string
-	Medium         string
-	Large          string
-}
-
-type ArticlesPictures struct {
-	gorm.Model
-	PictureId uint
-	ArticleId uint
-}
