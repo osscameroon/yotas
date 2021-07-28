@@ -197,7 +197,7 @@ paths:
         "403":
           $ref: "#/components/responses/403Error"
 
-  /oranisations:
+  /organisations:
     get:
       tags:
         - Organisations
