@@ -4,7 +4,7 @@ import (
 	"github.com/osscameroon/yotas/app"
 )
 
-func AuthRouter() {
+func authRouter() {
 	router := app.GetApiRouter()
 
 	router.POST("/login", LoginHandler)

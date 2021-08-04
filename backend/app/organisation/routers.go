@@ -4,7 +4,7 @@ import (
 	"github.com/osscameroon/yotas/app"
 )
 
-func OrganisationRouter() {
+func organisationRouter() {
 	router := app.GetApiRouter()
 
 	router.GET("/organisations", OrganisationsAllHandler)
