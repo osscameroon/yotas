@@ -2,6 +2,21 @@ BINARYNAME=yotas
 
 .DEFAULT_GOAL := help
 
+lint_install:
+	GO111MODULE=off
+	go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+
+docker_db:
+	POSTGRESQL_DATABASE="yotas"
+	POSTGRESQL_USERNAME="postgres"
+	POSTGRESQL_PASSWORD="postgres"
+
+	docker run --name postgresql_bitnami \
+		-e POSTGRESQL_DATABASE=$POSTGRESQL_DATABASE \
+		-e POSTGRESQL_PASSWORD=$POSTGRESQL_PASSWORD \
+		-e POSTGRESQL_USERNAME=$POSTGRESQL_USERNAME \
+		bitnami/postgresql:latest
+
 run:
 	go run main.go
 
