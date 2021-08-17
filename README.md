@@ -6,9 +6,16 @@ Yotas is an open source engagement awarding system. Open source contributors acr
 ## Why?
 [know more about yotas](./docs/wiki/whatisyotas.md)
 
-
 ## How to run
 TODO
+
+## How to run the api doc
+
+move to the `docs/api/` folder and run:
+```terminal
+$> yarn install
+$> yarn start
+```
 
 ## License
 
