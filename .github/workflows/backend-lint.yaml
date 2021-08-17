@@ -1,13 +1,10 @@
 name: Backend Lint
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - backend
   pull_request:
     paths:
       - backend
+      - .github/workflows/backend-lint.yaml
 
 jobs:
   build:

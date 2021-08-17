@@ -3,14 +3,14 @@ package organisation
 import (
 	"errors"
 	"fmt"
-	"github.com/osscameroon/yotas/db"
 	"strings"
 	"time"
+
+	"github.com/osscameroon/yotas/db"
 )
 
 //CreateArticle Add an Articles for an Organisations. The return an error if something when wrong
 func CreateArticle(article *Articles) error {
-
 	if strings.TrimSpace(article.Name) == "" {
 		return errors.New("article name can't be empty")
 	}
@@ -32,7 +32,6 @@ func CreateArticle(article *Articles) error {
 
 //GetArticle Retrieve an Articles an return a *Articles. If the article are not found the will return an nil pointer with an error
 func GetArticle(articleID uint) (*Articles, error) {
-
 	var article Articles
 	result := db.Session.Where("id = ?", articleID).First(&article)
 	if result.Error != nil {
@@ -44,7 +43,6 @@ func GetArticle(articleID uint) (*Articles, error) {
 
 //UpdateArticle update an Articles
 func UpdateArticle(article *Articles) error {
-
 	article.UpdatedAt = time.Now().UTC()
 	result := db.Session.Save(article)
 	return result.Error
@@ -58,7 +56,6 @@ func DeleteArticle(articleID uint) error {
 
 //CreateOrganisationArticle Create a new OrganisationsArticles
 func CreateOrganisationArticle(organisationID uint, articleID uint) error {
-
 	return db.Session.Create(&OrganisationsArticles{
 		OrganisationId: organisationID,
 		ArticleId:      articleID,
@@ -68,7 +65,6 @@ func CreateOrganisationArticle(organisationID uint, articleID uint) error {
 
 //GetOrganisationArticles Get a list of Articles related to an Organisations
 func GetOrganisationArticles(organisationID uint, categoryId string, limit int, offset int, search string, priceGte int, priceLte int, sort string) ([]Articles, error) {
-
 	results := []Articles{}
 	search = fmt.Sprintf("%s%s%s", "%", search, "%")
 	err := db.Session.Model(&Articles{}).
@@ -82,7 +78,6 @@ func GetOrganisationArticles(organisationID uint, categoryId string, limit int, 
 
 //CreateArticlePictures Add a list of ArticlesPictures for an Articles.
 func CreateArticlePictures(articleID uint, picturesID []uint) error {
-
 	if len(picturesID) == 0 {
 		return nil
 	}
@@ -98,7 +93,6 @@ func CreateArticlePictures(articleID uint, picturesID []uint) error {
 
 //GetArticlePictures Get all Pictures of an Articles
 func GetArticlePictures(articleID uint) ([]Pictures, error) {
-
 	results := []Pictures{}
 	err := db.Session.Model(&Pictures{}).
 		Joins("JOIN articles_pictures on articles_pictures.picture_id = pictures.id and  articles_pictures.article_id = ?", articleID).
@@ -116,7 +110,6 @@ func DeleteArticlePictures(articleID uint) error {
 //DeleteArticlePicturesWithID Delete all ArticlesPictures of an Articles
 // if invertDeletion is true we delete all ArticlesPictures where ID is not in picturesID
 func DeleteArticlePicturesWithID(articleID uint, picturesID []uint, invertDeletion ...bool) error {
-
 	if len(picturesID) == 0 {
 		return nil
 	}
@@ -125,5 +118,4 @@ func DeleteArticlePicturesWithID(articleID uint, picturesID []uint, invertDeleti
 	}
 
 	return db.Session.Where("article_id = ? AND pictures_id NOT IN ?", articleID, picturesID).Delete(&ArticlesPictures{}).Error
-
 }
