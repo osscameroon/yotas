@@ -25,7 +25,6 @@ type ArticlesPresenter struct {
 
 //CreateArticleHandler is a handler for CreateArticle
 func CreateArticleHandler(ctx *gin.Context) {
-
 	if strings.TrimSpace(ctx.GetHeader("Tenant")) == "" {
 		ctx.String(http.StatusBadRequest, ErrTenantNotProvided.Error())
 		return
@@ -85,7 +84,6 @@ func CreateArticleHandler(ctx *gin.Context) {
 
 //GetArticleHandler is a handler for GetArticle
 func GetArticleHandler(ctx *gin.Context) {
-
 	if strings.TrimSpace(ctx.GetHeader("Tenant")) == "" {
 		ctx.String(http.StatusBadRequest, ErrTenantNotProvided.Error())
 		return
@@ -117,7 +115,6 @@ func GetArticleHandler(ctx *gin.Context) {
 
 //GetOrganisationArticlesHandler is a handler for GetOrganisationArticles
 func GetOrganisationArticlesHandler(ctx *gin.Context) {
-
 	organisationID, err := strconv.Atoi(ctx.GetHeader("Tenant"))
 	if err != nil {
 		ctx.String(http.StatusBadRequest, ErrTenantNotProvided.Error())
@@ -180,7 +177,6 @@ func GetOrganisationArticlesHandler(ctx *gin.Context) {
 
 //UpdateArticleHandler is a handler for UpdateArticle
 func UpdateArticleHandler(ctx *gin.Context) {
-
 	if strings.TrimSpace(ctx.GetHeader("Tenant")) == "" {
 		ctx.String(http.StatusBadRequest, ErrTenantNotProvided.Error())
 		return
@@ -269,7 +265,6 @@ func UpdateArticleHandler(ctx *gin.Context) {
 
 //DeleteArticleHandler is a handler for DeleteArticle
 func DeleteArticleHandler(ctx *gin.Context) {
-
 	articleID, err := strconv.Atoi(ctx.Param("articleID"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, "Article id must be an int")

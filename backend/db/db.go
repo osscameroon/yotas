@@ -22,7 +22,6 @@ var Session *gorm.DB
 
 //Init start the connection to the database
 func Init() {
-
 	var err error
 
 	params := fmt.Sprintf(
