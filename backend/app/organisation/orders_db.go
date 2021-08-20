@@ -15,11 +15,11 @@ func CreateOrder(order *Orders, orderItems []*OrderItemPresenter) error {
 			return errors.New("can't create orders")
 		}
 
-		for _, orderarticle := range orderItems {
-			orderarticle.OrderID = order.ID
-			err = tx.Create(orderarticle.OrdersArticles).Error
+		for _, orderArticle := range orderItems {
+			orderArticle.OrderID = order.ID
+			err = tx.Create(orderArticle.OrdersArticles).Error
 			if err != nil {
-				return fmt.Errorf("can't create orders process faild when creating order item %s", orderarticle.Article.Name)
+				return fmt.Errorf("can't create orders process faild when creating order item %s", orderArticle.Article.Name)
 			}
 		}
 
@@ -50,7 +50,7 @@ func GetWalletOrders(walletID string, limit int, offset int) ([]Orders, error) {
 	return results, err
 }
 
-func GetOrganisationOrders(organisationID string, limit int, offset int) ([]Orders, error) {
+func GetOrganisationOrders(organisationID uint, limit int, offset int) ([]Orders, error) {
 	results := []Orders{}
 	err := db.Session.Model(&Orders{}).
 		Joins("JOINS wallets on wallets.wallet_id = orders.wallet_id and wallets.organisation_id = ?", organisationID).
