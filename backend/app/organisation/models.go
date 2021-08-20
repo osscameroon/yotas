@@ -46,9 +46,14 @@ type Operations struct {
 
 type Orders struct {
 	db.Model
-	WalletId  string `json:"wallet_id"`
-	ArticleId uint   `json:"article_id"`
-	Quantity  int64  `json:"quantity"`
+	WalletId string `json:"wallet_id"`
+}
+
+type OrdersArticles struct {
+	db.Model
+	OrderID   uint `json:"order_id"`
+	ArticleID uint `json:"article_id"`
+	Quantity  int  `json:"quantity"`
 }
 
 type Articles struct {

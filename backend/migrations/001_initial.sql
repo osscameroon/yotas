@@ -75,8 +75,6 @@ CREATE TABLE IF NOT EXISTS orders (
     id INT NOT NULL AUTO_INCREMENT,
 
     wallet_id VARCHAR(300),
-    article_id INT NOT NULL,
-    quantity INTEGER,
 
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
@@ -84,8 +82,24 @@ CREATE TABLE IF NOT EXISTS orders (
 
     UNIQUE(id),
     PRIMARY KEY(Id),
-    FOREIGN KEY (wallet_id) REFERENCES Wallets(wallet_id),
-    FOREIGN KEY (article_id) REFERENCES Articles(id)
+    FOREIGN KEY (wallet_id) REFERENCES Wallets(wallet_id)
+);
+
+CREATE TABLE IF NOT EXISTS orders_articles(
+    id INT NOT NULL AUTO_INCREMENT,
+
+    order_id INT NOT NULL,
+    article_id INT NOT NULL,
+    quantity INT NOT NULL,
+
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
+
+    UNIQUE(id),
+    PRIMARY KEY(id),
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (article_id) REFERENCES articles(id)
 );
 
 CREATE TABLE IF NOT EXISTS organisations_articles (
