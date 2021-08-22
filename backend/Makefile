@@ -6,12 +6,12 @@ HOSTNAME=localhost
 DBNAME=yotas
 USER=yotas
 PASSWORD=yotas
-GOOSE_MIGRATION=cd migrations && goose postgres 'host=$(HOSTNAME) \
-												dbname=$(DBNAME) \
-												user=$(USER) \
-												password=$(PASSWORD) \
-												sslmode=disable'
+GOOSE_MIGRATION=cd migrations && goose postgres 'host=$(HOSTNAME) dbname=$(DBNAME) user=$(USER) password=$(PASSWORD) sslmode=disable'
 
+
+# commands
+
+## --------- application ----------
 run:
 	go run main.go
 
@@ -22,7 +22,9 @@ build:
 ## fmt: format Go source code
 fmt:
 	go fmt ./...
+## --------- application ----------
 
+## --------- migrations ----------
 install_goose:
 	go get -u github.com/pressly/goose/v3/cmd/goose
 
@@ -31,6 +33,8 @@ goose_up:
 
 goose_down:
 	$(GOOSE_MIGRATION) down
+## --------- migrations ----------
+
 
 ## vet: examines Go source code and reports suspicious constructs
 vet:
