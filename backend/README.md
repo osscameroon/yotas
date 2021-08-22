@@ -13,7 +13,7 @@ This is the backend of the Yotas system.
 ## How to install
 
 - Install posgresql for your OS (or use a docker image).
-- Install goose in the project : `make goose`
+- Install goose in the project : `make install_goose`
 - Set postgresql:
     - Enter the postgresql CLI mode : `sudo -i -u postgres` then hit `psql`
     - create your database : `CREATE DATABASE yotas;`
