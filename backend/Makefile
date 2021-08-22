@@ -1,6 +1,16 @@
 BINARYNAME=yotas
-
 .DEFAULT_GOAL := help
+
+# Database variables
+HOSTNAME=localhost
+DBNAME=yotas
+USER=yotas
+PASSWORD=yotas
+GOOSE_MIGRATION=cd migrations && goose postgres 'host=$(HOSTNAME) \
+												dbname=$(DBNAME) \
+												user=$(USER) \
+												password=$(PASSWORD) \
+												sslmode=disable'
 
 run:
 	go run main.go
@@ -12,6 +22,15 @@ build:
 ## fmt: format Go source code
 fmt:
 	go fmt ./...
+
+install_goose:
+	go get -u github.com/pressly/goose/v3/cmd/goose
+
+goose_up:
+	$(GOOSE_MIGRATION) up
+
+goose_down:
+	$(GOOSE_MIGRATION) down
 
 ## vet: examines Go source code and reports suspicious constructs
 vet:
