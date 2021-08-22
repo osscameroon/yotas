@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS organisations (
 
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
 
     UNIQUE(email, github_id),
     PRIMARY KEY (id)
@@ -29,6 +30,7 @@ CREATE TABLE IF NOT EXISTS users (
 
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
 
     UNIQUE(email, github_id),
     PRIMARY KEY(Id)
@@ -44,6 +46,7 @@ CREATE TABLE IF NOT EXISTS wallets (
 
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
 
     UNIQUE(id, wallet_id),
     PRIMARY KEY(id),
@@ -62,6 +65,7 @@ CREATE TABLE IF NOT EXISTS articles (
 
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
 
     UNIQUE(id),
     PRIMARY KEY(Id)
@@ -76,6 +80,7 @@ CREATE TABLE IF NOT EXISTS orders (
 
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
 
     UNIQUE(id),
     PRIMARY KEY(Id),
@@ -91,6 +96,7 @@ CREATE TABLE IF NOT EXISTS organisations_articles (
 
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
 
     UNIQUE(id),
     PRIMARY KEY(Id),
@@ -107,6 +113,7 @@ CREATE TABLE IF NOT EXISTS organisations_users (
 
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
 
     UNIQUE(id),
     PRIMARY KEY(Id),
@@ -124,6 +131,8 @@ CREATE TABLE IF NOT EXISTS operations (
     operation_hash TEXT,
 
     created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
 
     UNIQUE(operation_hash),
     PRIMARY KEY(id),
@@ -141,6 +150,8 @@ CREATE TABLE IF NOT EXISTS pictures (
     medium TEXT,
     large TEXT,
     created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
 
     UNIQUE(id),
     PRIMARY KEY(id),
@@ -152,8 +163,9 @@ CREATE TABLE IF NOT EXISTS articles_pictures(
 
     picture_id INT NOT NULL,
     article_id INT NOT NULL,
-
     created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
 
     UNIQUE(id),
     PRIMARY KEY(id),
