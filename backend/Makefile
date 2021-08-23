@@ -12,7 +12,7 @@ run:
 
 ## build: build application binary.
 build:
-	go build -o $(BINARYNPG_STRINGAME)
+	go build -o $(BINARYNAME)
 
 ## fmt: format Go source code
 fmt:
