@@ -12,7 +12,7 @@ run:
 
 ## build: build application binary.
 build:
-	go build -o $(BINARYNAME)
+	go build -o $(BINARYNPG_STRINGAME)
 
 ## fmt: format Go source code
 fmt:
@@ -23,10 +23,10 @@ install_goose:
 	go get -u github.com/pressly/goose/v3/cmd/goose
 
 goose_up:
-	$(GOOSE_MIGRATION) up
+	cd migrations && goose postgres $(PG_STRING) up
 
 goose_down:
-	$(GOOSE_MIGRATION) down
+	cd migrations && goose postgres $(PG_STRING) down
 
 
 ## vet: examines Go source code and reports suspicious constructs
