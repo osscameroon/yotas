@@ -1,7 +1,7 @@
 -include .env
 BINARYNAME=yotas
 .DEFAULT_GOAL := help
-PG_STRING = 'host=${PG_HOST} dbname=${PG_DBNAME} user=${PG_USER } password=${PG_PASSWORD} sslmode=disable'
+PG_STRING = 'host=${PG_HOST} dbname=${PG_DBNAME} user=${PG_USER} password=${PG_PASSWORD} sslmode=disable'
 
 # Database variables
 
