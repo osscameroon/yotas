@@ -41,6 +41,22 @@ func GetArticle(articleID uint) (*Articles, error) {
 	return &article, nil
 }
 
+//GetArticles Retrieve a list of Articles and return a []Articles. If the article are not found this will return an empty slice with an error
+func GetArticles(articlesID []uint) ([]Articles, error) {
+	idList := ""
+	for i := 0; i < len(articlesID); i++ {
+		if i+1 == len(articlesID) {
+			idList += fmt.Sprintf("%v", articlesID[i])
+			continue
+		}
+
+		idList += fmt.Sprintf("%v, ", articlesID[i])
+	}
+	var articles []Articles
+	err := db.Session.Where("id IN (?)", idList).Scan(&articles).Error
+	return articles, err
+}
+
 //UpdateArticle update an Articles
 func UpdateArticle(article *Articles) error {
 	article.UpdatedAt = time.Now().UTC()
