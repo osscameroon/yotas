@@ -1,191 +1,221 @@
 -- +goose Up
 
 -- +goose StatementBegin
+CREATE SEQUENCE IF NOT EXISTS organisations_seq;
 CREATE TABLE IF NOT EXISTS organisations (
-    id INT NOT NULL AUTO_INCREMENT,
+    id INTEGER NOT NULL DEFAULT NEXTVAL ('organisations_seq'),
 
-    `name` VARCHAR(150),
-    email VARCHAR(150) NOT NULL,
-    github_id VARCHAR(150) NOT NULL,
+    name VARCHAR(150),
+    email VARCHAR(150) NOT NULL UNIQUE,
+    github_id VARCHAR(150) NOT NULL UNIQUE,
     avatar_url VARCHAR(300),
     web_site VARCHAR(300),
-    `description` VARCHAR(300),
+    description VARCHAR(300),
 
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
+    created_at TIMESTAMP(0),
+    updated_at TIMESTAMP(0),
+    deleted_at TIMESTAMP(0),
 
-    UNIQUE(email, github_id),
-    PRIMARY KEY (id)
+    PRIMARY KEY(id)
 );
+-- +goose StatementEnd
 
+-- +goose StatementBegin
+CREATE SEQUENCE IF NOT EXISTS users_seq;
 CREATE TABLE IF NOT EXISTS users (
-    id INT NOT NULL AUTO_INCREMENT,
+    id INTEGER NOT NULL DEFAULT NEXTVAL ('users_seq'),
 
-    `name` VARCHAR(150),
-    email VARCHAR(150) NOT NULL,
-    github_id VARCHAR(150) NOT NULL,
+    name VARCHAR(150),
+    email VARCHAR(150) NOT NULL UNIQUE,
+    github_id VARCHAR(150) NOT NULL UNIQUE,
     github_token VARCHAR(300) NOT NULL,
     avatar_url VARCHAR(300),
 
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
+    created_at TIMESTAMP(0),
+    updated_at TIMESTAMP(0),
+    deleted_at TIMESTAMP(0),
 
-    UNIQUE(email, github_id),
-    PRIMARY KEY(Id)
+    PRIMARY KEY(id)
 );
+-- +goose StatementEnd
 
+
+-- +goose StatementBegin
+CREATE SEQUENCE IF NOT EXISTS wallets_seq;
 CREATE TABLE IF NOT EXISTS wallets (
-    id INT NOT NULL AUTO_INCREMENT,
+    id INTEGER NOT NULL DEFAULT NEXTVAL ('wallets_seq'),
 
-    wallet_id VARCHAR(300) NOT NULL,
-    user_id   INT NOT NULL,
-    organisation_id   INT NOT NULL,
-    balance INT NOT NULL,
+    wallet_id VARCHAR(300) UNIQUE NOT NULL,
+    user_id   INTEGER NOT NULL,
+    organisation_id   INTEGER NOT NULL,
+    balance INTEGER NOT NULL,
 
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
+    created_at TIMESTAMP(0),
+    updated_at TIMESTAMP(0),
+    deleted_at TIMESTAMP(0),
 
-    UNIQUE(id, wallet_id),
+
     PRIMARY KEY(id),
-    FOREIGN KEY (user_id) REFERENCES Users (id),
-    FOREIGN KEY (organisation_id) REFERENCES Organisations (id)
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (organisation_id) REFERENCES organisations (id)
 );
+-- +goose StatementEnd
 
+
+-- +goose StatementBegin
+CREATE SEQUENCE IF NOT EXISTS articles_seq;
 CREATE TABLE IF NOT EXISTS articles (
-    id INT NOT NULL AUTO_INCREMENT,
+    id INTEGER NOT NULL DEFAULT NEXTVAL ('articles_seq'),
 
-    `name` VARCHAR(150),
-    `description` TEXT,
+    name VARCHAR(150),
+    description TEXT,
     quantity INTEGER,
-    price INT NOT NULL,
+    price INTEGER NOT NULL,
     metadata TEXT,
 
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
+    created_at TIMESTAMP(0),
+    updated_at TIMESTAMP(0),
+    deleted_at TIMESTAMP(0),
 
-    UNIQUE(id),
-    PRIMARY KEY(Id)
+    PRIMARY KEY(id)
 );
+-- +goose StatementEnd
 
+
+-- +goose StatementBegin
+CREATE SEQUENCE IF NOT EXISTS orders_seq;
 CREATE TABLE IF NOT EXISTS orders (
-    id INT NOT NULL AUTO_INCREMENT,
+    id INTEGER NOT NULL DEFAULT NEXTVAL ('orders_seq'),
 
-    wallet_id VARCHAR(300),
-    article_id INT NOT NULL,
+    wallet_id VARCHAR(300) NOT NULL,
+    article_id INTEGER NOT NULL,
     quantity INTEGER,
 
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
+    created_at TIMESTAMP(0),
+    updated_at TIMESTAMP(0),
+    deleted_at TIMESTAMP(0),
 
-    UNIQUE(id),
-    PRIMARY KEY(Id),
-    FOREIGN KEY (wallet_id) REFERENCES Wallets(wallet_id),
-    FOREIGN KEY (article_id) REFERENCES Articles(id)
+
+    PRIMARY KEY(id),
+    FOREIGN KEY (wallet_id) REFERENCES wallets(wallet_id),
+    FOREIGN KEY (article_id) REFERENCES articles(id)
 );
+-- +goose StatementEnd
 
+
+-- +goose StatementBegin
+CREATE SEQUENCE IF NOT EXISTS organisations_articles_seq;
 CREATE TABLE IF NOT EXISTS organisations_articles (
-    id INT NOT NULL AUTO_INCREMENT,
+    id INTEGER NOT NULL DEFAULT NEXTVAL ('organisations_articles_seq'),
 
-    organisation_id INT NOT NULL,
-    article_id INT NOT NULL,
+    organisation_id INTEGER NOT NULL,
+    article_id INTEGER NOT NULL,
 
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
+    created_at TIMESTAMP(0),
+    updated_at TIMESTAMP(0),
+    deleted_at TIMESTAMP(0),
 
-    UNIQUE(id),
-    PRIMARY KEY(Id),
-    FOREIGN KEY (organisation_id) REFERENCES Organisations (id),
-    FOREIGN KEY (article_id) REFERENCES Articles (id)
+
+    PRIMARY KEY(id),
+    FOREIGN KEY (organisation_id) REFERENCES organisations (id),
+    FOREIGN KEY (article_id) REFERENCES articles (id)
 );
+-- +goose StatementEnd
 
+
+-- +goose StatementBegin
+CREATE SEQUENCE IF NOT EXISTS organisations_users_seq;
 CREATE TABLE IF NOT EXISTS organisations_users (
-    id INT NOT NULL AUTO_INCREMENT,
+    id INTEGER NOT NULL DEFAULT NEXTVAL ('organisations_users_seq'),
 
-    organisation_id INT NOT NULL,
-    user_id INT NOT NULL,
+    organisation_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
     active BOOLEAN,
 
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
+    created_at TIMESTAMP(0),
+    updated_at TIMESTAMP(0),
+    deleted_at TIMESTAMP(0),
 
-    UNIQUE(id),
-    PRIMARY KEY(Id),
-    FOREIGN KEY (organisation_id) REFERENCES Organisations (id),
-    FOREIGN KEY (user_id) REFERENCES Users (id)
-);
 
-CREATE TABLE IF NOT EXISTS operations (
-    id INT NOT NULL AUTO_INCREMENT,
-
-    amount INT NOT NULL,
-    wallet_id VARCHAR(300),
-    operation_type ENUM ('buy','receive'),
-    approved       BOOLEAN,
-    operation_hash TEXT,
-
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
-
-    UNIQUE(operation_hash),
     PRIMARY KEY(id),
-    FOREIGN KEY (wallet_id) REFERENCES Wallets(wallet_id),
+    FOREIGN KEY (organisation_id) REFERENCES organisations (id),
+    FOREIGN KEY (user_id) REFERENCES users (id)
 );
+-- +goose StatementEnd
 
+
+-- +goose StatementBegin
+CREATE SEQUENCE IF NOT EXISTS operations_seq;
+CREATE TABLE IF NOT EXISTS operations (
+    id INTEGER NOT NULL DEFAULT NEXTVAL ('operations_seq'),
+
+    amount INTEGER NOT NULL,
+    wallet_id VARCHAR(300),
+    operation_type TEXT,
+    approved       BOOLEAN,
+    operation_hash TEXT UNIQUE,
+
+    created_at TIMESTAMP(0),
+    updated_at TIMESTAMP(0),
+    deleted_at TIMESTAMP(0),
+
+
+    PRIMARY KEY(id),
+    FOREIGN KEY (wallet_id) REFERENCES wallets(wallet_id)
+);
+-- +goose StatementEnd
+
+
+-- +goose StatementBegin
+CREATE SEQUENCE IF NOT EXISTS pictures_seq;
 CREATE TABLE IF NOT EXISTS pictures (
-    id  INT NOT NULL AUTO_INCREMENT,
+    id  INTEGER NOT NULL DEFAULT NEXTVAL ('pictures_seq'),
 
-    organisation_id INT NOT NULL,
+    organisation_id INTEGER NOT NULL,
 
     alt_text TEXT,
     original TEXT,
     small TEXT,
     medium TEXT,
     large TEXT,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
 
-    UNIQUE(id),
+    created_at TIMESTAMP(0),
+    updated_at TIMESTAMP(0),
+    deleted_at TIMESTAMP(0),
+
+
     PRIMARY KEY(id),
-    FOREIGN KEY (organisation_id) REFERENCES Organisations(id),
+    FOREIGN KEY (organisation_id) REFERENCES organisations(id)
 );
-
-CREATE TABLE IF NOT EXISTS articles_pictures(
-    id INT NOT NULL AUTO_INCREMENT,
-
-    picture_id INT NOT NULL,
-    article_id INT NOT NULL,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
-
-    UNIQUE(id),
-    PRIMARY KEY(id),
-    FOREIGN KEY (article_id) REFERENCES articles(id),
-    FOREIGN KEY (picture_id) REFERENCES pictures(id),
-);
-
 -- +goose StatementEnd
 
--- +goose Down
 
 -- +goose StatementBegin
-DROP TABLE organisations;
-DROP TABLE users;
-DROP TABLE wallets;
-DROP TABLE articles;
-DROP TABLE orders;
-DROP TABLE organisations_articles;
-DROP TABLE organisations_users;
-DROP TABLE operations;
-DROP TABLE pictures;
-DROP TABLE articles_pictures;
+CREATE SEQUENCE IF NOT EXISTS articles_pictures_seq;
+CREATE TABLE IF NOT EXISTS articles_pictures(
+    id INTEGER NOT NULL DEFAULT NEXTVAL ('articles_pictures_seq'),
+
+    picture_id INTEGER NOT NULL,
+    article_id INTEGER NOT NULL,
+    created_at TIMESTAMP(0),
+    updated_at TIMESTAMP(0),
+    deleted_at TIMESTAMP(0),
+
+
+    PRIMARY KEY(id),
+    FOREIGN KEY (article_id) REFERENCES articles(id),
+    FOREIGN KEY (picture_id) REFERENCES pictures(id)
+);
 -- +goose StatementEnd
+
+-- DROP TABLE IF EXISTS organisations;
+-- DROP TABLE IF EXISTS users;
+-- DROP TABLE IF EXISTS wallets;
+-- DROP TABLE IF EXISTS articles;
+-- DROP TABLE IF EXISTS orders;
+-- DROP TABLE IF EXISTS organisations_articles;
+-- DROP TABLE IF EXISTS organisations_users;
+-- DROP TABLE IF EXISTS operations;
+-- DROP TABLE IF EXISTS pictures;
+-- DROP TABLE IF EXISTS articles_pictures;
+-- +goose Down

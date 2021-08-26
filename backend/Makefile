@@ -1,7 +1,12 @@
+-include .env
 BINARYNAME=yotas
-
 .DEFAULT_GOAL := help
+PG_STRING = 'host=${PG_HOST} dbname=${PG_DBNAME} user=${PG_USER} password=${PG_PASSWORD} sslmode=disable'
 
+# Database variables
+
+# commands
+## application
 run:
 	go run main.go
 
@@ -12,6 +17,17 @@ build:
 ## fmt: format Go source code
 fmt:
 	go fmt ./...
+
+## migrations
+install_goose:
+	go get -u github.com/pressly/goose/v3/cmd/goose
+
+goose_up:
+	cd migrations && goose postgres $(PG_STRING) up
+
+goose_down:
+	cd migrations && goose postgres $(PG_STRING) down
+
 
 ## vet: examines Go source code and reports suspicious constructs
 vet:
