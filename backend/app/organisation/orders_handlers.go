@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type OrderPresenter struct {
@@ -212,7 +213,7 @@ func CreateOrderHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, order)
 }
 
-func ProcessOrder(ctx *gin.Context) {
+func ProcessOrderHandler(ctx *gin.Context) {
 
 	/*	organisationID, err := strconv.Atoi(ctx.GetHeader("Tenant"))
 		if err != nil || organisationID == 0 {
@@ -225,6 +226,39 @@ func ProcessOrder(ctx *gin.Context) {
 	var decision OrderDecision
 	err := ctx.BindJSON(&decision)
 	if err != nil {
+		ctx.String(http.StatusNotAcceptable, "Bad content")
 		return
 	}
+
+	orderID, err := strconv.Atoi(ctx.Param("orderID"))
+	if err != nil {
+		ctx.String(http.StatusBadRequest, "Order id must be an int")
+		return
+	}
+
+	_, err = GetOrder(uint(orderID))
+	if err != nil {
+		ctx.String(http.StatusNotFound, "Ressource not found")
+		return
+	}
+
+	if decision.Accepted {
+		err := AcceptOrder(uint(orderID), decision.Reason)
+		if err != nil {
+			ctx.String(http.StatusInternalServerError, "An error occur when processing the order")
+			return
+		}
+	} else {
+		if strings.TrimSpace(decision.Reason) == "" {
+			ctx.String(http.StatusBadRequest, "Please provide a reason when declining an order")
+			return
+		}
+		err := DeclineOrder(uint(orderID), decision.Reason)
+		if err != nil {
+			ctx.String(http.StatusInternalServerError, "An error occur when processing the order")
+			return
+		}
+	}
+
+	ctx.String(http.StatusOK, "Order processed")
 }
