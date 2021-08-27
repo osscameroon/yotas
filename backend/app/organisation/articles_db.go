@@ -112,7 +112,6 @@ func GetArticlePictures(articleID uint) ([]Pictures, error) {
 	results := []Pictures{}
 	err := db.Session.Model(&Pictures{}).
 		Joins("JOIN articles_pictures on articles_pictures.picture_id = pictures.id and  articles_pictures.article_id = ?", articleID).
-		Distinct("pictures.id").
 		Scan(&results).Error
 
 	return results, err
