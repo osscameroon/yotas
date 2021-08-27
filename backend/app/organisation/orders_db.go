@@ -8,8 +8,18 @@ import (
 	"time"
 )
 
+type OrderState string
+
+const (
+	orderStateToReview OrderState = "to review"
+	orderStateAccepted OrderState = "accepted"
+	orderStateDeclined OrderState = "declined"
+)
+
 func CreateOrder(order *Orders, orderItems []*OrderItemPresenter) error {
 	err := db.Session.Transaction(func(tx *gorm.DB) error {
+
+		order.State = string(orderStateToReview)
 		err := tx.Create(order).Error
 		if err != nil {
 			return errors.New("can't create orders")
@@ -19,7 +29,7 @@ func CreateOrder(order *Orders, orderItems []*OrderItemPresenter) error {
 			orderArticle.OrderID = order.ID
 			err = tx.Create(orderArticle.OrdersArticles).Error
 			if err != nil {
-				return fmt.Errorf("can't create orders process faild when creating order item %s", orderArticle.Article.Name)
+				return fmt.Errorf("can't create orders process fail when creating order item %s", orderArticle.Article.Name)
 			}
 		}
 
@@ -53,7 +63,7 @@ func GetWalletOrders(walletID string, limit int, offset int) ([]Orders, error) {
 func GetOrganisationOrders(organisationID uint, limit int, offset int) ([]Orders, error) {
 	results := []Orders{}
 	err := db.Session.Model(&Orders{}).
-		Joins("JOINS wallets on wallets.wallet_id = orders.wallet_id and wallets.organisation_id = ?", organisationID).
+		Joins("JOIN wallets on wallets.wallet_id = orders.wallet_id and wallets.organisation_id = ?", organisationID).
 		Limit(limit).
 		Offset(offset).
 		Scan(&results).Error
@@ -70,7 +80,11 @@ func GetOrderArticles(orderID uint) ([]OrdersArticles, error) {
 	return results, err
 }
 
-func ProcessOrder(orderID uint, isAccepted bool) {
+func DeclineOrder(orderID uint, state OrderState) {
+
+}
+
+func AcceptOrder() {
 
 }
 
