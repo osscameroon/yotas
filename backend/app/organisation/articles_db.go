@@ -58,15 +58,6 @@ func GetOrganisationArticle(articleID uint, organisationID uint) (*Articles, err
 
 //GetArticles Retrieve a list of Articles and return a []Articles. If the article are not found this will return an empty slice with an error
 func GetArticles(articlesID []uint) ([]Articles, error) {
-	idList := ""
-	for i := 0; i < len(articlesID); i++ {
-		if i+1 == len(articlesID) {
-			idList += fmt.Sprintf("%v", articlesID[i])
-			continue
-		}
-
-		idList += fmt.Sprintf("%v, ", articlesID[i])
-	}
 	var articles []Articles
 	err := db.Session.Model(&Articles{}).Where("id IN (?)", articlesID).Scan(&articles).Error
 	return articles, err
