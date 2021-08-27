@@ -1,6 +1,7 @@
 package organisation
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -8,12 +9,12 @@ import (
 
 type OrderPresenter struct {
 	*Orders
-	Items []OrderItemPresenter
+	Items []*OrderItemPresenter `json:"items"`
 }
 
 type OrderItemPresenter struct {
 	*OrdersArticles
-	Article ArticlesPresenter
+	Article ArticlesPresenter `json:"article"`
 }
 
 func GetOrganisationOrdersHandler(ctx *gin.Context) {
@@ -76,7 +77,7 @@ func GetOrganisationOrdersHandler(ctx *gin.Context) {
 			if err != nil {
 				return
 			}
-			ordersPresenter[i].Items = append(ordersPresenter[i].Items, OrderItemPresenter{
+			ordersPresenter[i].Items = append(ordersPresenter[i].Items, &OrderItemPresenter{
 				OrdersArticles: &orderArticles[orderArticleIndex],
 				Article: ArticlesPresenter{
 					Articles: article,
@@ -95,7 +96,48 @@ func GetOrganisationOrdersHandler(ctx *gin.Context) {
 
 func CreateOrderHandler(ctx *gin.Context) {
 
+	organisationID, err := strconv.Atoi(ctx.GetHeader("Tenant"))
+	if err != nil || organisationID == 0 {
+		ctx.String(http.StatusBadRequest, ErrTenantNotProvided.Error())
+		return
+	}
+
+	order := OrderPresenter{}
+	err = ctx.BindJSON(&order)
+	if err != nil {
+		ctx.String(http.StatusNotAcceptable, "You must provide an Articles in json format on the body")
+		return
+	}
+
+	// TODO check if wallet id belong to this organisation
+
+	if len(order.Items) == 0 {
+		ctx.JSON(http.StatusBadRequest, map[string]interface{}{"messages": []string{"Can't create order with no items"}})
+		return
+	}
+
+	// Check if each article belong to this organisation
+	for index := 0; index < len(order.Items); index++ {
+		article, err := GetOrganisationArticle(order.Items[index].ArticleID, uint(organisationID))
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, map[string]interface{}{"messages": []string{
+				fmt.Sprintf("The %v item doesn't belong to this organisation", index)}})
+			return
+		}
+
+		order.Items[index].Article.Articles = *article
+		order.Items[index].Article.Pictures, _ = GetArticlePictures(order.Items[index].ArticleID)
+	}
+
+	err = CreateOrder(order.Orders, order.Items)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, map[string]interface{}{"messages": []string{"Can't create order an error occur" + err.Error()}})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, order)
 }
+
 func GetUserOrdersHandler(ctx *gin.Context) {
 
 }
