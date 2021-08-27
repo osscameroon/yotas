@@ -41,6 +41,21 @@ func GetArticle(articleID uint) (*Articles, error) {
 	return &article, nil
 }
 
+//GetOrganisationArticle Retrieve an Articles an return a *Articles who belong to an Organisations. If the article are not found the will return an nil pointer with an error
+func GetOrganisationArticle(articleID uint, organisationID uint) (*Articles, error) {
+	var article Articles
+	result := db.Session.Where(
+		"id = ? AND id IN (?)",
+		articleID,
+		db.Session.Model(&OrganisationsArticles{}).Where("organisation_id = ?", organisationID).Select("article_id")).
+		First(&article)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &article, nil
+}
+
 //GetArticles Retrieve a list of Articles and return a []Articles. If the article are not found this will return an empty slice with an error
 func GetArticles(articlesID []uint) ([]Articles, error) {
 	idList := ""
@@ -53,7 +68,7 @@ func GetArticles(articlesID []uint) ([]Articles, error) {
 		idList += fmt.Sprintf("%v, ", articlesID[i])
 	}
 	var articles []Articles
-	err := db.Session.Where("id IN (?)", idList).Scan(&articles).Error
+	err := db.Session.Model(&Articles{}).Where("id IN (?)", articlesID).Scan(&articles).Error
 	return articles, err
 }
 
