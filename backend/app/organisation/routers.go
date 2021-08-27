@@ -17,4 +17,9 @@ func OrganisationRouter() {
 	router.GET("/articles/:articleID", GetArticleHandler)
 	router.PUT("/articles/:articleID", UpdateArticleHandler)
 	router.DELETE("/articles/:articleID", DeleteArticleHandler)
+
+	router.GET("/orders", GetUserOrdersHandler)
+	router.GET("/orders/organisation", GetOrganisationOrdersHandler)
+	router.GET("/orders/:orderID", GetOrderHandler)
+	router.POST("/orders", CreateOrderHandler)
 }
