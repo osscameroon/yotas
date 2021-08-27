@@ -17,6 +17,11 @@ type OrderItemPresenter struct {
 	Article ArticlesPresenter `json:"article"`
 }
 
+type OrderDecision struct {
+	Accepted bool   `json:"accepted"`
+	Reason   string `json:"reason"`
+}
+
 func GetOrganisationOrdersHandler(ctx *gin.Context) {
 
 	organisationID, err := strconv.Atoi(ctx.GetHeader("Tenant"))
@@ -174,7 +179,7 @@ func CreateOrderHandler(ctx *gin.Context) {
 	order := OrderPresenter{}
 	err = ctx.BindJSON(&order)
 	if err != nil {
-		ctx.String(http.StatusNotAcceptable, "You must provide an Articles in json format on the body")
+		ctx.String(http.StatusNotAcceptable, "Bad content")
 		return
 	}
 
@@ -207,6 +212,19 @@ func CreateOrderHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, order)
 }
 
-func UpdateOrder(ctx *gin.Context) {
+func ProcessOrder(ctx *gin.Context) {
 
+	/*	organisationID, err := strconv.Atoi(ctx.GetHeader("Tenant"))
+		if err != nil || organisationID == 0 {
+			ctx.String(http.StatusBadRequest, ErrTenantNotProvided.Error())
+			return
+		}*/
+
+	//TODO check if the user is an admin of the organisation
+
+	var decision OrderDecision
+	err := ctx.BindJSON(&decision)
+	if err != nil {
+		return
+	}
 }
