@@ -88,6 +88,7 @@ CREATE TABLE IF NOT EXISTS orders (
     id INTEGER NOT NULL DEFAULT NEXTVAL ('orders_seq'),
 
     wallet_id VARCHAR(300) NOT NULL,
+    total_amount INTEGER NOT NULL,
     state VARCHAR(300) NOT NULL,
     decision TEXT,
 

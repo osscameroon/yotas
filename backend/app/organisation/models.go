@@ -46,9 +46,10 @@ type Operations struct {
 
 type Orders struct {
 	db.Model
-	WalletId string `json:"wallet_id"`
-	State    string `json:"state"`
-	Decision string `json:"decision"`
+	WalletId    string `json:"wallet_id"`
+	TotalAmount int64  `json:"total_amount"`
+	State       string `json:"state"`
+	Decision    string `json:"decision"`
 }
 
 type OrdersArticles struct {
