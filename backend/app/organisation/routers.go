@@ -23,4 +23,6 @@ func OrganisationRouter() {
 	router.GET("/orders/:orderID", GetOrderHandler)
 	router.POST("/orders", CreateOrderHandler)
 	router.POST("/orders/:orderID/process", ProcessOrderHandler)
+	router.POST("/orders/:orderID/pay", PayOrderHandler)
+	router.DELETE("/orders/:orderID", DeleteOrderHandler)
 }

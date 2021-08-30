@@ -213,6 +213,40 @@ func CreateOrderHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, order)
 }
 
+func DeleteOrderHandler(ctx *gin.Context) {
+	/*	organisationID, err := strconv.Atoi(ctx.GetHeader("Tenant"))
+		if err != nil || organisationID == 0 {
+			ctx.String(http.StatusBadRequest, ErrTenantNotProvided.Error())
+			return
+		}*/
+
+	//TODO check if the user is the owner of the order or an admin
+	orderID, err := strconv.Atoi(ctx.Param("orderID"))
+	if err != nil {
+		ctx.String(http.StatusBadRequest, "Order id must be an int")
+		return
+	}
+
+	order, err := GetOrder(uint(orderID))
+	if err != nil {
+		ctx.String(http.StatusNotFound, "Ressource not found")
+		return
+	}
+
+	if order.State != string(orderStateNotPaid) {
+		ctx.String(http.StatusForbidden, "Can't delete order with state "+order.State)
+		return
+	}
+
+	err = DeleteOrder(order.ID)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, "An error occur when deleting the order")
+		return
+	}
+
+	ctx.String(http.StatusOK, "Order deleted")
+}
+
 func ProcessOrderHandler(ctx *gin.Context) {
 
 	/*	organisationID, err := strconv.Atoi(ctx.GetHeader("Tenant"))
@@ -236,14 +270,19 @@ func ProcessOrderHandler(ctx *gin.Context) {
 		return
 	}
 
-	_, err = GetOrder(uint(orderID))
+	order, err := GetOrder(uint(orderID))
 	if err != nil {
 		ctx.String(http.StatusNotFound, "Ressource not found")
 		return
 	}
 
+	if order.State != string(orderStateToReview) {
+		ctx.String(http.StatusForbidden, "Can't process order with state "+order.State)
+		return
+	}
+
 	if decision.Accepted {
-		err := AcceptOrder(uint(orderID), decision.Reason)
+		err = AcceptOrder(uint(orderID), decision.Reason)
 		if err != nil {
 			ctx.String(http.StatusInternalServerError, "An error occur when processing the order")
 			return
@@ -253,7 +292,7 @@ func ProcessOrderHandler(ctx *gin.Context) {
 			ctx.String(http.StatusBadRequest, "Please provide a reason when declining an order")
 			return
 		}
-		err := DeclineOrder(uint(orderID), decision.Reason)
+		err = DeclineOrder(uint(orderID), decision.Reason)
 		if err != nil {
 			ctx.String(http.StatusInternalServerError, "An error occur when processing the order")
 			return
@@ -261,4 +300,39 @@ func ProcessOrderHandler(ctx *gin.Context) {
 	}
 
 	ctx.String(http.StatusOK, "Order processed")
+}
+
+func PayOrderHandler(ctx *gin.Context) {
+
+	/*	organisationID, err := strconv.Atoi(ctx.GetHeader("Tenant"))
+		if err != nil || organisationID == 0 {
+			ctx.String(http.StatusBadRequest, ErrTenantNotProvided.Error())
+			return
+		}*/
+
+	//TODO check if the user is the owner of the order
+	orderID, err := strconv.Atoi(ctx.Param("orderID"))
+	if err != nil {
+		ctx.String(http.StatusBadRequest, "Order id must be an int")
+		return
+	}
+
+	order, err := GetOrder(uint(orderID))
+	if err != nil {
+		ctx.String(http.StatusNotFound, "Ressource not found")
+		return
+	}
+
+	if order.State != string(orderStateNotPaid) {
+		ctx.String(http.StatusForbidden, "Can't pay order with state "+order.State)
+		return
+	}
+
+	err = PayOrder(order.ID)
+	if err != nil {
+		ctx.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	ctx.String(http.StatusOK, "Payment processed successfully")
 }
