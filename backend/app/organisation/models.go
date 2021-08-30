@@ -53,9 +53,10 @@ type Orders struct {
 
 type OrdersArticles struct {
 	db.Model
-	OrderID   uint `json:"order_id"`
-	ArticleID uint `json:"article_id"`
-	Quantity  int  `json:"quantity"`
+	OrderID      uint  `json:"order_id"`
+	ArticleID    uint  `json:"article_id"`
+	ArticlePrice int64 `json:"article_price"`
+	Quantity     int   `json:"quantity"`
 }
 
 type Articles struct {

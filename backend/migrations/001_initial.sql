@@ -109,6 +109,7 @@ CREATE TABLE IF NOT EXISTS orders_articles(
 
     order_id INTEGER NOT NULL,
     article_id INTEGER NOT NULL,
+    article_price INTEGER NOT NULL,
     quantity INTEGER NOT NULL,
 
     created_at TIMESTAMP(0),
