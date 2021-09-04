@@ -11,4 +11,5 @@ type Users struct {
 	GithubId    string `json:"github_id"`
 	GithubToken string `json:"github_token"`
 	AvatarUrl   string `json:"avatar_url"`
+	Active        bool `json:"active"`
 }

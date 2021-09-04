@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS users (
     github_id VARCHAR(150) NOT NULL UNIQUE,
     github_token VARCHAR(300) NOT NULL,
     avatar_url VARCHAR(300),
+    active BOOLEAN NOT NULL,
 
     created_at TIMESTAMP(0),
     updated_at TIMESTAMP(0),

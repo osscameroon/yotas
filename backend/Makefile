@@ -8,6 +8,8 @@ PG_STRING = 'host=${PG_HOST} dbname=${PG_DBNAME} user=${PG_USER} password=${PG_P
 # commands
 ## application
 run:
+	GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID} \
+	GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET} \
 	go run main.go
 
 ## build: build application binary.

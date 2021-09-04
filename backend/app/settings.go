@@ -3,13 +3,15 @@ package app
 import "os"
 
 type env struct {
-	HttpPort   string
-	BaseUri    string
-	PgHost     string
-	PgDbName   string
-	PgUser     string
-	PgPassword string
-	PgPort     string
+	HttpPort       string
+	BaseUri        string
+	PgHost         string
+	PgDbName       string
+	PgUser         string
+	PgPassword     string
+	PgPort         string
+	GithubClientId string
+	GithubClientSecret string
 }
 
 var Env *env
@@ -24,5 +26,7 @@ func InitEnv() {
 		PgUser:     os.Getenv("PG_USER"),
 		PgPassword: os.Getenv("PG_PASSWORD"),
 		PgPort:     os.Getenv("PG_PORT"),
+		GithubClientId:     os.Getenv("GITHUB_CLIENT_ID"),
+		GithubClientSecret:     os.Getenv("GITHUB_CLIENT_SECRET"),
 	}
 }
