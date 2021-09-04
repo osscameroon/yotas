@@ -60,19 +60,12 @@ func githubCallbackHandler(c *gin.Context){
 }
 
 func authHandler(c *gin.Context) {
-	session := sessions.Default(c)
-	token := session.Get("token")
-
-	if token == nil {
-		Url := oauthConf.AuthCodeURL("hoge", oauth2.AccessTypeOnline)
-		c.JSON(http.StatusOK, gin.H{
-			"status": 200,
-			"url":  Url,
-		})
-	} else {
-		// We return the user
-		getUserFromToken(c, token.(string))
-	}
+	// will always return the url
+	Url := oauthConf.AuthCodeURL("hoge", oauth2.AccessTypeOnline)
+	c.JSON(http.StatusOK, gin.H{
+		"status": 200,
+		"url":  Url,
+	})
 }
 
 func getUserFromToken(c *gin.Context, token string){
