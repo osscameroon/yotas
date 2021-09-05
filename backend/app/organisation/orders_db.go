@@ -18,12 +18,6 @@ const (
 	orderStateDeclined OrderState = "declined"
 )
 
-const (
-	operationTypeRefund OperationType = "refund"
-	operationTypeCredit OperationType = "credit"
-	operationTypeDebit  OperationType = "debit"
-)
-
 func CreateOrder(order *Orders, orderItems []*OrderItemPresenter) error {
 	err := db.Session.Transaction(func(tx *gorm.DB) error {
 
