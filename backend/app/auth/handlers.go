@@ -8,85 +8,107 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
-	githuboauth "golang.org/x/oauth2/github"
 	"io"
+	"log"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 )
-// auth configurations
-var oauthConf = &oauth2.Config{
-	ClientID:     os.Getenv("GITHUB_CLIENT_ID"),
-	ClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
-	Scopes:       []string{"user"},
-	Endpoint:     githuboauth.Endpoint,
-}
-var secretKey = os.Getenv("SECRET_KEY_BASE")
 
-type UsersPresenter struct {
-	Users
-}
+func githubCallbackHandler(oauthConf oauth2.Config) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		var call Callback
+		err := c.BindJSON(&call)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"status": 400,
+				"reason": "Malformed request",
+			})
+			log.Println(err.Error())
+		}
 
-type Callback struct {
-	Code string `json:"code"`
-	State string `json:"state"`
-}
-
-func githubCallbackHandler(c *gin.Context){
-	var call Callback
-	err := c.BindJSON(&call)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status": 400,
-			"reason": "Malformed request",
-		})
-		return
+		token, err := oauthConf.Exchange(oauth2.NoContext, call.Code)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"status": 400,
+				"reason": "Invalid code",
+			})
+			log.Println(err.Error())
+		}
+		session := sessions.Default(c)
+		session.Set("token", token.AccessToken)
+		err = session.Save()
+		// We return the user
+		getUserFromToken(c, token.AccessToken, oauthConf)
 	}
 
-	token, err1 := oauthConf.Exchange(oauth2.NoContext, call.Code)
-	if err1 != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status": 400,
-			"reason": "Invalid code",
+	return gin.HandlerFunc(fn)
+}
+
+func authHandler(oauthConf oauth2.Config) gin.HandlerFunc {
+	fn := func(c *gin.Context) {
+		// will always return the url
+		Url := oauthConf.AuthCodeURL("hoge", oauth2.AccessTypeOnline)
+		c.JSON(http.StatusOK, gin.H{
+			"status": 200,
+			"url":    Url,
 		})
-		return
 	}
-	session := sessions.Default(c)
-	session.Set("token", token.AccessToken)
-	err1 = session.Save()
-	// We return the user
-	getUserFromToken(c, token.AccessToken)
+
+	return gin.HandlerFunc(fn)
 }
 
-func authHandler(c *gin.Context) {
-	// will always return the url
-	Url := oauthConf.AuthCodeURL("hoge", oauth2.AccessTypeOnline)
-	c.JSON(http.StatusOK, gin.H{
-		"status": 200,
-		"url":  Url,
-	})
-}
 
-func getUserFromToken(c *gin.Context, token string){
-	oauthClient := oauthConf.Client(oauth2.NoContext, &oauth2.Token{AccessToken: token})
+func githubOauthClient(c *gin.Context, token string, oauthConf oauth2.Config, fromCache bool) (*github.User, error) {
+	var oauthClient *http.Client
+	if fromCache {
+		session := sessions.Default(c)
+		tokenCached := session.Get("token")
+		oauthClient = oauthConf.Client(oauth2.NoContext, &oauth2.Token{AccessToken: tokenCached.(string)})
+	}else{
+		oauthClient = oauthConf.Client(oauth2.NoContext, &oauth2.Token{AccessToken: token})
+	}
+
 	client := github.NewClient(oauthClient)
-
 	user, _, err := client.Users.Get(c, "")
 
+	return user, err
+}
+
+func createUserHandler (user *github.User, token string){
+	var err = CreateUser(*user, token)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status": 404,
-			"reason": "User not found",
-		})
-		return
+		log.Println(err.Error())
 	}
-	// the user creation
-	err = CreateUser(*user, token)
+}
+
+func getUserFromToken(c *gin.Context, token string, oauthConf oauth2.Config){
+
+	var user *github.User
+	var err error
+
+	// we try to get from database
+	githubUser, err := GetUserByToken(token)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
-		return
+		// we get from cache
+		user, err = githubOauthClient(c, token, oauthConf, true)
+		if err != nil {
+			// we don't get from cache
+			user, err = githubOauthClient(c, token, oauthConf, false)
+			if err != nil {
+				log.Println(err.Error())
+			}else{
+				createUserHandler(user, token)
+			}
+		}else{
+			createUserHandler(user, token)
+		}
+	}else{
+		user.Name = &githubUser.Name
+		user.Email = &githubUser.Name
+		user.NodeID = &githubUser.GithubId
+		user.AvatarURL = &githubUser.AvatarUrl
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -96,7 +118,7 @@ func getUserFromToken(c *gin.Context, token string){
 			"github_profile": gin.H{
 				"name": user.Name,
 				"email": user.Email,
-				"github_id": user.ID,
+				"github_id": user.NodeID,
 				"avatar_url": user.AvatarURL,
 			},
 			"active": true,

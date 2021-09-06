@@ -13,3 +13,12 @@ type Users struct {
 	AvatarUrl   string `json:"avatar_url"`
 	Active        bool `json:"active"`
 }
+
+type UsersPresenter struct {
+	Users
+}
+
+type Callback struct {
+	Code string `json:"code"`
+	State string `json:"state"`
+}
