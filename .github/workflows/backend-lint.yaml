@@ -2,6 +2,8 @@ name: Backend Lint
 
 on:
   pull_request:
+    branches:
+      - main
     paths:
       - backend
       - .github/workflows/backend-lint.yaml
