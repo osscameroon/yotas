@@ -5,6 +5,9 @@
 *.so
 *.dylib
 
+#Binaries
+yotas
+
 # Jetbrain
 .idea
 
