@@ -11,3 +11,4 @@ linters:
     - staticcheck
     - typecheck
     - varcheck
+    - gofmt

@@ -1,18 +1,20 @@
 package auth
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
-	"github.com/gin-gonic/contrib/sessions"
-	"github.com/gin-gonic/gin"
-	"github.com/google/go-github/github"
-	"golang.org/x/oauth2"
 	"io"
 	"log"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/contrib/sessions"
+	"github.com/gin-gonic/gin"
+	"github.com/google/go-github/github"
+	"golang.org/x/oauth2"
 )
 
 func githubCallbackHandler(oauthConf oauth2.Config) gin.HandlerFunc {
@@ -25,19 +27,27 @@ func githubCallbackHandler(oauthConf oauth2.Config) gin.HandlerFunc {
 				"reason": "Malformed request",
 			})
 			log.Println(err.Error())
+			return
 		}
 
-		token, err := oauthConf.Exchange(oauth2.NoContext, call.Code)
+		token, err := oauthConf.Exchange(context.TODO(), call.Code)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
 				"status": 400,
 				"reason": "Invalid code",
 			})
 			log.Println(err.Error())
+			return
 		}
+
 		session := sessions.Default(c)
 		session.Set("token", token.AccessToken)
 		err = session.Save()
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
+
 		// We return the user
 		getUserFromToken(c, token.AccessToken, oauthConf)
 	}
@@ -58,15 +68,14 @@ func authHandler(oauthConf oauth2.Config) gin.HandlerFunc {
 	return gin.HandlerFunc(fn)
 }
 
-
 func githubOauthClient(c *gin.Context, token string, oauthConf oauth2.Config, fromCache bool) (*github.User, error) {
 	var oauthClient *http.Client
 	if fromCache {
 		session := sessions.Default(c)
 		tokenCached := session.Get("token")
-		oauthClient = oauthConf.Client(oauth2.NoContext, &oauth2.Token{AccessToken: tokenCached.(string)})
-	}else{
-		oauthClient = oauthConf.Client(oauth2.NoContext, &oauth2.Token{AccessToken: token})
+		oauthClient = oauthConf.Client(context.TODO(), &oauth2.Token{AccessToken: tokenCached.(string)})
+	} else {
+		oauthClient = oauthConf.Client(context.TODO(), &oauth2.Token{AccessToken: token})
 	}
 
 	client := github.NewClient(oauthClient)
@@ -75,15 +84,14 @@ func githubOauthClient(c *gin.Context, token string, oauthConf oauth2.Config, fr
 	return user, err
 }
 
-func createUserHandler (user *github.User, token string){
+func createUserHandler(user *github.User, token string) {
 	var err = CreateUser(*user, token)
 	if err != nil {
 		log.Println(err.Error())
 	}
 }
 
-func getUserFromToken(c *gin.Context, token string, oauthConf oauth2.Config){
-
+func getUserFromToken(c *gin.Context, token string, oauthConf oauth2.Config) {
 	var user *github.User
 	var err error
 
@@ -98,13 +106,13 @@ func getUserFromToken(c *gin.Context, token string, oauthConf oauth2.Config){
 			user, err = githubOauthClient(c, token, oauthConf, false)
 			if err != nil {
 				log.Println(err.Error())
-			}else{
+			} else {
 				createUserHandler(user, token)
 			}
-		}else{
+		} else {
 			createUserHandler(user, token)
 		}
-	}else{
+	} else {
 		user.Name = &githubUser.Name
 		user.Email = &githubUser.Name
 		user.NodeID = &githubUser.GithubId
@@ -116,12 +124,12 @@ func getUserFromToken(c *gin.Context, token string, oauthConf oauth2.Config){
 		"user": gin.H{
 			"id": 1,
 			"github_profile": gin.H{
-				"name": user.Name,
-				"email": user.Email,
-				"github_id": user.NodeID,
+				"name":       user.Name,
+				"email":      user.Email,
+				"github_id":  user.NodeID,
 				"avatar_url": user.AvatarURL,
 			},
-			"active": true,
+			"active":     true,
 			"created_at": time.Now(),
 			"updated_at": time.Now(),
 		},

@@ -1,6 +1,5 @@
 package organisation
 
-
-func CreateOrganisation(){
+func CreateOrganisation() {
 
 }
