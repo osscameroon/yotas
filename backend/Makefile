@@ -18,6 +18,10 @@ build:
 fmt:
 	go fmt ./...
 
+## build-docker: build docker image
+build-docker: test
+	docker build -t yotas-api .
+
 ## migrations
 install_goose:
 	go get -u github.com/pressly/goose/v3/cmd/goose
