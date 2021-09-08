@@ -15,7 +15,6 @@ func CreateUser(user github.User, token string) error {
 		GithubId 		: *user.NodeID,
 		GithubToken 	: token,
 		AvatarUrl 		: *user.AvatarURL,
-		Active			: false,
 	}).Error
 }
 

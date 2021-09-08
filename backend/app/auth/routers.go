@@ -14,12 +14,12 @@ func AuthRouter() {
 	router := app.GetApiRouter()
 
 	// We get our secret
-	secretKey := os.Getenv("SECRET_KEY_BASE")
+	secretKey := app.Env.SecretKey
 
 	// auth configurations
 	oauthConf := &oauth2.Config{
-		ClientID:     os.Getenv("GITHUB_CLIENT_ID"),
-		ClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
+		ClientID:     app.Env.GithubClientId,
+		ClientSecret: app.Env.GithubClientSecret,
 		Scopes:       []string{"user"},
 		Endpoint:     githuboauth.Endpoint,
 	}

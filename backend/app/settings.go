@@ -12,6 +12,7 @@ type env struct {
 	PgPort         string
 	GithubClientId string
 	GithubClientSecret string
+	SecretKey string
 }
 
 var Env *env
@@ -28,5 +29,6 @@ func InitEnv() {
 		PgPort:     os.Getenv("PG_PORT"),
 		GithubClientId:     os.Getenv("GITHUB_CLIENT_ID"),
 		GithubClientSecret:     os.Getenv("GITHUB_CLIENT_SECRET"),
+		SecretKey:     os.Getenv("SECRET_KEY_BASE"),
 	}
 }
