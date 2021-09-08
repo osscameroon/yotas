@@ -18,6 +18,6 @@ type UsersPresenter struct {
 }
 
 type Callback struct {
-	Code string `json:"code"`
+	Code  string `json:"code"`
 	State string `json:"state"`
 }
