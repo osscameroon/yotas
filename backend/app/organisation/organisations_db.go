@@ -1,0 +1,6 @@
+package organisation
+
+
+func CreateOrganisation(){
+
+}
