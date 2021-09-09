@@ -19,7 +19,7 @@ const (
 )
 
 func CreateOrder(order *Orders, orderItems []*OrderItemPresenter) error {
-	err := db.Session.Transaction(func(tx *gorm.DB) error {
+	return db.Session.Transaction(func(tx *gorm.DB) error {
 
 		// We first create the order
 		order.State = string(orderStateNotPaid)
@@ -54,8 +54,6 @@ func CreateOrder(order *Orders, orderItems []*OrderItemPresenter) error {
 
 		return nil
 	})
-
-	return err
 }
 
 func GetOrder(orderID uint) (*Orders, error) {
@@ -68,24 +66,31 @@ func GetOrder(orderID uint) (*Orders, error) {
 	return &order, nil
 }
 
-func GetWalletOrders(walletID string, limit int, offset int) ([]Orders, error) {
+func GetWalletOrders(walletID string, orderStateFilter OrderState, limit int, offset int) ([]Orders, error) {
+
 	results := []Orders{}
-	err := db.Session.Model(&Orders{}).
-		Joins("JOINS wallets on wallets.wallet_id = orders.wallet_id and orders.wallet_id = ?", walletID).
-		Limit(limit).
-		Offset(offset).
-		Scan(&results).Error
+	req := db.Session.Model(&Orders{}).
+		Joins("JOINS wallets on wallets.wallet_id = orders.wallet_id and orders.wallet_id = ?", walletID)
+
+	if string(orderStateFilter) != "" {
+		req = req.Where("state = ?", string(orderStateFilter))
+	}
+
+	err := req.Limit(limit).Offset(offset).Scan(&results).Error
 
 	return results, err
 }
 
-func GetOrganisationOrders(organisationID uint, limit int, offset int) ([]Orders, error) {
+func GetOrganisationOrders(organisationID uint, orderStateFilter OrderState, limit int, offset int) ([]Orders, error) {
 	results := []Orders{}
-	err := db.Session.Model(&Orders{}).
-		Joins("JOIN wallets on wallets.wallet_id = orders.wallet_id and wallets.organisation_id = ?", organisationID).
-		Limit(limit).
-		Offset(offset).
-		Scan(&results).Error
+	req := db.Session.Model(&Orders{}).
+		Joins("JOIN wallets on wallets.wallet_id = orders.wallet_id and wallets.organisation_id = ?", organisationID)
+
+	if string(orderStateFilter) != "" {
+		req = req.Where("state = ?", string(orderStateFilter))
+	}
+
+	err := req.Limit(limit).Offset(offset).Scan(&results).Error
 
 	return results, err
 }
