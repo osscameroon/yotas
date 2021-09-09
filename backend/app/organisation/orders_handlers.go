@@ -192,16 +192,16 @@ func CreateOrderHandler(ctx *gin.Context) {
 	}
 
 	// Check if each article belong to this organisation
-	for index := 0; index < len(order.Items); index++ {
-		article, err := GetOrganisationArticle(order.Items[index].ArticleID, uint(organisationID))
+	for _, item := range order.Items {
+		article, err := GetOrganisationArticle(item.ArticleID, uint(organisationID))
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, map[string]interface{}{"messages": []string{
-				fmt.Sprintf("The %v item doesn't belong to this organisation", index)}})
+				fmt.Sprintf("The %v item doesn't belong to this organisation",  item.ArticleID)}})
 			return
 		}
 
-		order.Items[index].Article.Articles = *article
-		order.Items[index].Article.Pictures, _ = GetArticlePictures(order.Items[index].ArticleID)
+		item.Article.Articles = *article
+		item.Article.Pictures, _ = GetArticlePictures(item.ArticleID)
 	}
 
 	err = CreateOrder(order.Orders, order.Items)
