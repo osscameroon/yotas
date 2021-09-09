@@ -118,35 +118,9 @@ func DeclineOrder(orderID uint, reason string) error {
 			return errors.New("can't update order state")
 		}
 
-		//TODO implement operation hash
-		curTime, _ := time.Now().UTC().MarshalText()
-		err = tx.Create(&Operations{
-			Model:         db.Model{CreatedAt: time.Now().UTC()},
-			Amount:        order.TotalAmount,
-			WalletId:      order.WalletId,
-			OperationType: string(operationTypeRefund),
-			Approved:      true,
-			OperationHash: string(curTime),
-		}).Error
-
-		if err != nil {
-			return errors.New("can't create refund operation")
-		}
-
-		var wallet Wallets
-		err = tx.Model(&Wallets{}).Where("wallet_id = ?", order.WalletId).First(&wallet).Error
-		if err != nil {
-			return errors.New("can't find user wallet")
-		}
-
-		wallet.Balance += order.TotalAmount
-		wallet.UpdatedAt = time.Now().UTC()
-		err = tx.Save(&wallet).Error
-		if err != nil {
-			return errors.New("can't refund wallet")
-		}
-
-		return nil
+		operationDescription := fmt.Sprintf("Refund your wallet due to the organisation admin decision to cancel your order %d. \nDetails: %s", orderID, reason)
+		_, err = CreateOperation(tx, order.WalletId, operationTypeRefund, order.TotalAmount, operationDescription)
+		return err
 	})
 
 	return err
@@ -201,29 +175,9 @@ func PayOrder(orderID uint) error {
 			return errors.New("can't update order state")
 		}
 
-		//TODO implement operation hash
-		curTime, _ := time.Now().UTC().MarshalText()
-		err = tx.Create(&Operations{
-			Model:         db.Model{CreatedAt: time.Now().UTC()},
-			Amount:        order.TotalAmount,
-			WalletId:      order.WalletId,
-			OperationType: string(operationTypeDebit),
-			Approved:      true,
-			OperationHash: string(curTime),
-		}).Error
-
-		if err != nil {
-			return errors.New("can't create refund operation")
-		}
-
-		wallet.Balance -= order.TotalAmount
-		wallet.UpdatedAt = time.Now().UTC()
-		err = tx.Save(&wallet).Error
-		if err != nil {
-			return errors.New("can't refund wallet")
-		}
-
-		return nil
+		operationDescription := fmt.Sprintf("Debit your wallet due to your order %d.", orderID)
+		_, err = CreateOperation(tx, order.WalletId, operationTypeDebit, order.TotalAmount, operationDescription)
+		return err
 	})
 
 	return err
