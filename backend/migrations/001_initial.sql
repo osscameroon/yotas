@@ -171,6 +171,7 @@ CREATE TABLE IF NOT EXISTS operations (
     id INTEGER NOT NULL DEFAULT NEXTVAL ('operations_seq'),
 
     amount INTEGER NOT NULL,
+    description TEXT,
     wallet_id VARCHAR(300),
     operation_type TEXT,
     approved       BOOLEAN,

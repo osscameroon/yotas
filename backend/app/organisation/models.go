@@ -38,6 +38,7 @@ type Wallets struct {
 type Operations struct {
 	db.Model
 	Amount        int64  `json:"amount"`
+	Description   string `json:"description"`
 	WalletId      string `json:"wallet_id"`
 	OperationType string `json:"operation_type"`
 	Approved      bool   `json:"approved"`
