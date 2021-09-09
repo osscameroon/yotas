@@ -51,6 +51,8 @@ func CreateOperation(transaction *gorm.DB, walletID string, operationType Operat
 			Description:   description,
 			OperationType: string(operationType),
 			Approved:      true,
+			//due to nullity constraint in migrations we give an initial random value to our operation hash
+			OperationHash: fmt.Sprintf("%v", time.Now().UTC()),
 		}
 		err = tx.Create(&operation).Error
 		if err != nil {
