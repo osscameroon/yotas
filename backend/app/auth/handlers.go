@@ -18,9 +18,8 @@ import (
 	"golang.org/x/oauth2"
 )
 
-
-// getUserByIDHandler will get the user from the given userID
-func getUserByIDHandler(c *gin.Context){
+// getUserByIdHandler will get the user from the given userID
+func getUserByIdHandler(c *gin.Context) {
 	userID, err := strconv.Atoi(c.Param("userID"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
