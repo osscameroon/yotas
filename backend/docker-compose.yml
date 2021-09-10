@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: yotas
+      POSTGRES_PASSWORD: yotas
+      POSTGRES_USER: yotas
+    ports:
+      - 5432:5432
+
+  api:
+    build: ./
+    depends_on:
+      - postgres
+    environment:
+      BASE_URI: api/
+      PORT: 9999
+      PG_HOST: postgres
+      PG_DBNAME: yotas
+      PG_USER: yotas
+      PG_PASSWORD: yotas
+      PG_PORT: 5432
+
+    ports:
+      - 9999:9999

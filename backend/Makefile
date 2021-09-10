@@ -32,6 +32,13 @@ goose_up:
 goose_down:
 	cd migrations && goose postgres $(PG_STRING) down
 
+## start-postgres:
+start-postgres:
+	docker-compose up postgres
+
+## stop-postgres:
+stop-postgres:
+	docker-compose down
 
 ## vet: examines Go source code and reports suspicious constructs
 vet:
