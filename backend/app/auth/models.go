@@ -12,3 +12,12 @@ type Users struct {
 	GithubToken string `json:"github_token"`
 	AvatarUrl   string `json:"avatar_url"`
 }
+
+type UsersPresenter struct {
+	Users
+}
+
+type Callback struct {
+	Code  string `json:"code"`
+	State string `json:"state"`
+}

@@ -2,12 +2,14 @@ name: Backend Lint
 
 on:
   pull_request:
+    branches:
+      - main
     paths:
-      - backend
+      - backend/**
       - .github/workflows/backend-lint.yaml
 
 jobs:
-  build:
+  lint:
     name: Lint
     runs-on: ubuntu-latest
     steps:

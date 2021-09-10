@@ -65,7 +65,7 @@ func CreateOrganisationArticle(organisationID uint, articleID uint) error {
 
 //GetOrganisationArticles Get a list of Articles related to an Organisations
 func GetOrganisationArticles(organisationID uint, categoryId string, limit int, offset int, search string, priceGte int, priceLte int, sort string) ([]Articles, error) {
-	results := []Articles{}
+	var results []Articles
 	search = fmt.Sprintf("%s%s%s", "%", search, "%")
 	err := db.Session.Model(&Articles{}).
 		Joins("JOIN organisations_articles on organisations_articles.article_id = articles.id and organisations_articles.organisation_id = ?", organisationID).
@@ -93,7 +93,7 @@ func CreateArticlePictures(articleID uint, picturesID []uint) error {
 
 //GetArticlePictures Get all Pictures of an Articles
 func GetArticlePictures(articleID uint) ([]Pictures, error) {
-	results := []Pictures{}
+	var results []Pictures
 	err := db.Session.Model(&Pictures{}).
 		Joins("JOIN articles_pictures on articles_pictures.picture_id = pictures.id and  articles_pictures.article_id = ?", articleID).
 		Distinct("pictures.id").
