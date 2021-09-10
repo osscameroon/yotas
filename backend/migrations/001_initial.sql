@@ -88,8 +88,9 @@ CREATE TABLE IF NOT EXISTS orders (
     id INTEGER NOT NULL DEFAULT NEXTVAL ('orders_seq'),
 
     wallet_id VARCHAR(300) NOT NULL,
-    article_id INTEGER NOT NULL,
-    quantity INTEGER,
+    total_amount INTEGER NOT NULL,
+    state VARCHAR(300) NOT NULL,
+    decision TEXT,
 
     created_at TIMESTAMP(0),
     updated_at TIMESTAMP(0),
@@ -97,7 +98,27 @@ CREATE TABLE IF NOT EXISTS orders (
 
 
     PRIMARY KEY(id),
-    FOREIGN KEY (wallet_id) REFERENCES wallets(wallet_id),
+    FOREIGN KEY (wallet_id) REFERENCES wallets(wallet_id)
+);
+-- +goose StatementEnd
+
+
+-- +goose StatementBegin
+CREATE SEQUENCE IF NOT EXISTS orders_articles_seq;
+CREATE TABLE IF NOT EXISTS orders_articles(
+    id INTEGER NOT NULL DEFAULT NEXTVAL ('orders_articles_seq'),
+
+    order_id INTEGER NOT NULL,
+    article_id INTEGER NOT NULL,
+    article_price INTEGER NOT NULL,
+    quantity INTEGER NOT NULL,
+
+    created_at TIMESTAMP(0),
+    updated_at TIMESTAMP(0),
+    deleted_at TIMESTAMP(0),
+
+    PRIMARY KEY(id),
+    FOREIGN KEY (order_id) REFERENCES orders(id),
     FOREIGN KEY (article_id) REFERENCES articles(id)
 );
 -- +goose StatementEnd
@@ -150,6 +171,7 @@ CREATE TABLE IF NOT EXISTS operations (
     id INTEGER NOT NULL DEFAULT NEXTVAL ('operations_seq'),
 
     amount INTEGER NOT NULL,
+    description TEXT,
     wallet_id VARCHAR(300),
     operation_type TEXT,
     approved       BOOLEAN,

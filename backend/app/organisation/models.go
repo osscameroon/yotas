@@ -38,6 +38,7 @@ type Wallets struct {
 type Operations struct {
 	db.Model
 	Amount        int64  `json:"amount"`
+	Description   string `json:"description"`
 	WalletId      string `json:"wallet_id"`
 	OperationType string `json:"operation_type"`
 	Approved      bool   `json:"approved"`
@@ -46,9 +47,18 @@ type Operations struct {
 
 type Orders struct {
 	db.Model
-	WalletId  string `json:"wallet_id"`
-	ArticleId uint   `json:"article_id"`
-	Quantity  int64  `json:"quantity"`
+	WalletId    string `json:"wallet_id"`
+	TotalAmount int64  `json:"total_amount"`
+	State       string `json:"state"`
+	Decision    string `json:"decision"`
+}
+
+type OrdersArticles struct {
+	db.Model
+	OrderID      uint  `json:"order_id"`
+	ArticleID    uint  `json:"article_id"`
+	ArticlePrice int64 `json:"article_price"`
+	Quantity     int   `json:"quantity"`
 }
 
 type Articles struct {

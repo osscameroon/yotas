@@ -41,6 +41,28 @@ func GetArticle(articleID uint) (*Articles, error) {
 	return &article, nil
 }
 
+//GetOrganisationArticle Retrieve an Articles an return a *Articles who belong to an Organisations. If the article are not found the will return an nil pointer with an error
+func GetOrganisationArticle(articleID uint, organisationID uint) (*Articles, error) {
+	var article Articles
+	result := db.Session.Where(
+		"id = ? AND id IN (?)",
+		articleID,
+		db.Session.Model(&OrganisationsArticles{}).Where("organisation_id = ?", organisationID).Select("article_id")).
+		First(&article)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &article, nil
+}
+
+//GetArticles Retrieve a list of Articles and return a []Articles. If the article are not found this will return an empty slice with an error
+func GetArticles(articlesID []uint) ([]Articles, error) {
+	var articles []Articles
+	err := db.Session.Model(&Articles{}).Where("id IN (?)", articlesID).Scan(&articles).Error
+	return articles, err
+}
+
 //UpdateArticle update an Articles
 func UpdateArticle(article *Articles) error {
 	article.UpdatedAt = time.Now().UTC()
@@ -96,7 +118,6 @@ func GetArticlePictures(articleID uint) ([]Pictures, error) {
 	var results []Pictures
 	err := db.Session.Model(&Pictures{}).
 		Joins("JOIN articles_pictures on articles_pictures.picture_id = pictures.id and  articles_pictures.article_id = ?", articleID).
-		Distinct("pictures.id").
 		Scan(&results).Error
 
 	return results, err
