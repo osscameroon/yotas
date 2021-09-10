@@ -14,8 +14,8 @@
     "write-heading-ids": "docusaurus write-heading-ids"
   },
   "dependencies": {
-    "@docusaurus/core": "2.0.0-beta.0",
-    "@docusaurus/preset-classic": "2.0.0-beta.0",
+    "@docusaurus/core": "2.0.0-beta.5",
+    "@docusaurus/preset-classic": "2.0.0-beta.5",
     "@mdx-js/react": "^1.6.21",
     "@svgr/webpack": "^5.5.0",
     "base64-js": "^1.5.1",
@@ -23,6 +23,7 @@
     "builtin-status-codes": "^3.0.0",
     "clsx": "^1.1.1",
     "core-js": "^3.13.1",
+    "docusaurus": "^2.0.0-alpha.378053ac5",
     "file-loader": "^6.2.0",
     "mobx": "^6.3.2",
     "node-polyfill-webpack-plugin": "^1.1.2",

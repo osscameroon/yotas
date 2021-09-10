@@ -57,8 +57,8 @@ func CreateArticleHandler(ctx *gin.Context) {
 		return
 	}
 
-	savedPictures := []Pictures{}
-	picturesIDToSaved := []uint{}
+	var savedPictures []Pictures
+	var picturesIDToSaved []uint
 	for i := 0; i < len(article.Pictures); i++ {
 		pictureID := article.Pictures[i].ID
 
@@ -230,8 +230,8 @@ func UpdateArticleHandler(ctx *gin.Context) {
 		return
 	}
 
-	picturesSaved := []Pictures{}
-	picturesIDToSave := []uint{}
+	var picturesSaved []Pictures
+	var picturesIDToSave []uint
 	for i := 0; i < len(storedPictures); i++ {
 		pictureID := storedPictures[i].ID
 

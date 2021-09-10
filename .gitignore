@@ -5,6 +5,9 @@
 *.so
 *.dylib
 
+#Binaries
+yotas
+
 # Jetbrain
 .idea
 
@@ -16,3 +19,6 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+#node
+node_modules
