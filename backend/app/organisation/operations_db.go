@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+type OperationType string
+
 const (
 	operationTypeRefund OperationType = "refund"
 	operationTypeCredit OperationType = "credit"

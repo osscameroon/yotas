@@ -9,7 +9,6 @@ import (
 )
 
 type OrderState string
-type OperationType string
 
 const (
 	orderStateNotPaid  OrderState = "not paid"
