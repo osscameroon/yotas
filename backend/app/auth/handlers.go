@@ -84,7 +84,7 @@ func githubCallbackHandler(oauthConf oauth2.Config) gin.HandlerFunc {
 	return gin.HandlerFunc(fn)
 }
 
-// authHandler will return the url to the clien with the githubClientID for him to logIN
+// authHandler will return the url to the client with the githubClientID for him to logIN
 func authHandler(oauthConf oauth2.Config) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		// will always return the url
