@@ -21,3 +21,10 @@ type Callback struct {
 	Code  string `json:"code"`
 	State string `json:"state"`
 }
+
+type PublicUser struct {
+	db.Model
+	Name        string `json:"name"`
+	Email       string `json:"email"`
+	AvatarUrl   string `json:"avatar_url"`
+}

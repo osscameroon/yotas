@@ -39,4 +39,5 @@ func AuthRouter() {
 
 	router.GET("/auth", authHandler(*oauthConf))
 	router.POST("/auth", githubCallbackHandler(*oauthConf))
+	router.GET("/user/:userID", getUserByIDHandler)
 }

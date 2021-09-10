@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -17,6 +18,34 @@ import (
 	"golang.org/x/oauth2"
 )
 
+// getUserByIDHandler will get the user from the given userID
+func getUserByIDHandler(c *gin.Context){
+	userID, err := strconv.Atoi(c.Param("userID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"reason": "User id must be an int",
+		})
+		return
+	}
+
+	user, err := GetUserByID(uint(userID))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"reason": err.Error(),
+		})
+		return
+	}
+	// Not sure yet about this, but the github-id and the gthub-token
+	// should be private right ?
+	user.GithubId = ""
+	user.GithubToken = ""
+
+	result := UsersPresenter{Users: *user}
+
+	c.JSON(http.StatusOK, result)
+}
+
+// githubCallbackHandler
 func githubCallbackHandler(oauthConf oauth2.Config) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		var call Callback
@@ -55,6 +84,7 @@ func githubCallbackHandler(oauthConf oauth2.Config) gin.HandlerFunc {
 	return gin.HandlerFunc(fn)
 }
 
+// authHandler will return the url to the clien with the githubClientID for him to logIN
 func authHandler(oauthConf oauth2.Config) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		// will always return the url
