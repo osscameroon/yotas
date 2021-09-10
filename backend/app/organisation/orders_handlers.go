@@ -64,9 +64,10 @@ func GetOrganisationOrdersHandler(ctx *gin.Context) {
 	}
 
 	var ordersPresenter []OrderPresenter
-	for _, order := range orders {
+	for orderIndex, order := range orders {
+
 		var orderPresenter OrderPresenter
-		orderPresenter.Orders = &order
+		orderPresenter.Orders = &orders[orderIndex]
 
 		orderArticles, err := GetOrderArticles(order.ID)
 		if err != nil {
@@ -83,7 +84,7 @@ func GetOrganisationOrdersHandler(ctx *gin.Context) {
 			return
 		}
 
-		for _, orderArticle := range orderArticles {
+		for orderArticleIndex, orderArticle := range orderArticles {
 			// search for articles
 			var articleToSave Articles
 			for _, article := range articles {
@@ -98,7 +99,7 @@ func GetOrganisationOrdersHandler(ctx *gin.Context) {
 				return
 			}
 			orderPresenter.Items = append(orderPresenter.Items, &OrderItemPresenter{
-				OrdersArticles: &orderArticle,
+				OrdersArticles: &orderArticles[orderArticleIndex],
 				Article: ArticlesPresenter{
 					Articles: articleToSave,
 					Pictures: pictures,
@@ -119,7 +120,7 @@ func GetOrganisationOrdersHandler(ctx *gin.Context) {
 	})
 }
 
-func GetUserOrdersHandler(ctx *gin.Context) {
+func GetWalletOrdersHandler(ctx *gin.Context) {
 
 	// Initializing default
 	limit := 1
@@ -148,9 +149,9 @@ func GetUserOrdersHandler(ctx *gin.Context) {
 	}
 
 	var ordersPresenter []OrderPresenter
-	for _, order := range orders {
+	for orderIndex, order := range orders {
 		var orderPresenter OrderPresenter
-		orderPresenter.Orders = &order
+		orderPresenter.Orders = &orders[orderIndex]
 
 		orderArticles, err := GetOrderArticles(order.ID)
 		if err != nil {
@@ -167,7 +168,7 @@ func GetUserOrdersHandler(ctx *gin.Context) {
 			return
 		}
 
-		for _, orderArticle := range orderArticles {
+		for orderArticleIndex, orderArticle := range orderArticles {
 			// search for articles
 			var articleToSave Articles
 			for _, article := range articles {
@@ -182,7 +183,7 @@ func GetUserOrdersHandler(ctx *gin.Context) {
 				return
 			}
 			orderPresenter.Items = append(orderPresenter.Items, &OrderItemPresenter{
-				OrdersArticles: &orderArticle,
+				OrdersArticles: &orderArticles[orderArticleIndex],
 				Article: ArticlesPresenter{
 					Articles: articleToSave,
 					Pictures: pictures,
@@ -282,14 +283,13 @@ func CreateOrderHandler(ctx *gin.Context) {
 		return
 	}
 
-	// TODO check if wallet id belong to this organisation
-
 	if len(order.Items) == 0 {
 		ctx.JSON(http.StatusBadRequest, map[string]interface{}{"messages": []string{"Can't create order with no items"}})
 		return
 	}
 
 	// Check if each article belong to this organisation
+	providedArticle := map[uint]uint{}
 	for _, item := range order.Items {
 		article, err := GetOrganisationArticle(item.ArticleID, uint(organisationID))
 		if err != nil {
@@ -298,6 +298,14 @@ func CreateOrderHandler(ctx *gin.Context) {
 			return
 		}
 
+		// check if we already have an orderItem for this article
+		if _, exist := providedArticle[item.ArticleID]; exist {
+			ctx.JSON(http.StatusBadRequest, map[string]interface{}{"messages": []string{
+				fmt.Sprintf("Please provide one orderitem per article. Duplicate on article %s", article.Name)}})
+			return
+		}
+
+		providedArticle[item.ArticleID] = item.ArticleID
 		item.Article.Articles = *article
 		item.Article.Pictures, _ = GetArticlePictures(item.ArticleID)
 	}
@@ -398,13 +406,13 @@ func ProcessOrderHandler(ctx *gin.Context) {
 
 func PayOrderHandler(ctx *gin.Context) {
 
-	//TODO check if the user is the owner of the order
 	orderID, err := strconv.Atoi(ctx.Param("orderID"))
 	if err != nil {
 		ctx.String(http.StatusBadRequest, "Order id must be an int")
 		return
 	}
 
+	//TODO check if the user is the owner of the order
 	order, err := GetOrder(uint(orderID))
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		log.Println(err)
@@ -427,4 +435,77 @@ func PayOrderHandler(ctx *gin.Context) {
 	}
 
 	ctx.String(http.StatusOK, "Payment processed successfully")
+}
+
+func UpdateOrderHandler(ctx *gin.Context) {
+
+	organisationID, err := strconv.Atoi(ctx.GetHeader("Tenant"))
+	if err != nil || organisationID == 0 {
+		ctx.String(http.StatusBadRequest, ErrTenantNotProvided.Error())
+		return
+	}
+
+	orderID, err := strconv.Atoi(ctx.Param("orderID"))
+	if err != nil {
+		ctx.String(http.StatusBadRequest, "Order id must be an int")
+		return
+	}
+
+	//TODO check if the user is the owner of the order
+	order, err := GetOrder(uint(orderID))
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		log.Println(err)
+		ctx.String(http.StatusInternalServerError, "An error occur")
+		return
+	} else if errors.Is(err, gorm.ErrRecordNotFound) {
+		ctx.String(http.StatusNotFound, "Ressource not found")
+		return
+	}
+
+	if order.State != string(orderStateNotPaid) {
+		ctx.String(http.StatusForbidden, "Can't update order with state "+order.State)
+		return
+	}
+
+	var orderPresenter OrderPresenter
+	err = ctx.BindJSON(&orderPresenter)
+	if err != nil {
+		ctx.String(http.StatusNotAcceptable, "Bad content")
+		return
+	}
+
+	if len(orderPresenter.Items) == 0 {
+		ctx.String(http.StatusBadRequest, "Provide at least one order item")
+		return
+	}
+
+	// Check if each article belong to this organisation
+	providedArticle := map[uint]uint{}
+	for _, item := range orderPresenter.Items {
+		article, err := GetOrganisationArticle(item.ArticleID, uint(organisationID))
+		if err != nil {
+			ctx.String(http.StatusBadRequest, fmt.Sprintf("The %v item doesn't belong to this organisation", item.ArticleID))
+			return
+		}
+
+		// check if we already have an orderItem for this article
+		if _, exist := providedArticle[item.ArticleID]; exist {
+			ctx.String(http.StatusBadRequest, fmt.Sprintf("Please provide one orderitem per article. Duplicate on article %s", article.Name))
+			return
+		}
+
+		providedArticle[item.ArticleID] = item.ArticleID
+		item.Article.Articles = *article
+		item.Article.Pictures, _ = GetArticlePictures(item.ArticleID)
+	}
+
+	updatedOrder, err := UpdateOrder(order.ID, orderPresenter.Items)
+	if err != nil {
+		log.Println(err)
+		ctx.String(http.StatusBadRequest, "An error occur try again later")
+		return
+	}
+
+	orderPresenter.Orders = updatedOrder
+	ctx.JSON(http.StatusOK, orderPresenter)
 }

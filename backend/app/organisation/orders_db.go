@@ -70,7 +70,7 @@ func GetWalletOrders(walletID string, orderStateFilter OrderState, limit int, of
 
 	results := []Orders{}
 	req := db.Session.Model(&Orders{}).
-		Joins("JOINS wallets on wallets.wallet_id = orders.wallet_id and orders.wallet_id = ?", walletID)
+		Joins("JOIN wallets on wallets.wallet_id = orders.wallet_id and orders.wallet_id = ?", walletID)
 
 	if string(orderStateFilter) != "" {
 		req = req.Where("state = ?", string(orderStateFilter))
@@ -203,4 +203,85 @@ func DeleteOrder(orderID uint) error {
 		return nil
 	})
 	return err
+}
+
+func UpdateOrder(orderID uint, orderItems []*OrderItemPresenter) (*Orders, error) {
+
+	var order Orders
+	err := db.Session.Transaction(func(tx *gorm.DB) error {
+		err := tx.Model(&Orders{}).Where("id = ?", orderID).First(&order).Error
+		if err != nil {
+			return err
+		}
+
+		var storedOrderArticles []OrdersArticles
+		err = tx.Model(&OrdersArticles{}).
+			Where("order_id = ?", orderID).
+			Scan(&storedOrderArticles).Error
+		if err != nil {
+			return err
+		}
+
+		// we create each order OrdersArticles and summing the order amount
+		var finalOrderItemsID []uint
+		var totalOrderAmount int64
+		for _, orderItem := range orderItems {
+			//sum the amount of article
+			//
+
+			// find if this orderItems already exist in the list of the stored items
+			orderItemAlreadyExist := false
+			for _, storedOrderArticle := range storedOrderArticles {
+				if orderItem.ArticleID != storedOrderArticle.ArticleID {
+					continue
+				}
+
+				orderItemAlreadyExist = true
+				storedOrderArticle.UpdatedAt = time.Now().UTC()
+				storedOrderArticle.Quantity = orderItem.Quantity
+				storedOrderArticle.ArticlePrice = orderItem.Article.Price
+				err = tx.Save(&storedOrderArticle).Error
+				if err != nil {
+					return err
+				}
+
+				orderItem.OrdersArticles = &storedOrderArticle
+				totalOrderAmount += int64(storedOrderArticle.Quantity) * storedOrderArticle.ArticlePrice
+				finalOrderItemsID = append(finalOrderItemsID, storedOrderArticle.ID)
+				break
+			}
+
+			if orderItemAlreadyExist {
+				continue
+			}
+
+			orderItem.OrdersArticles.OrderID = order.ID
+			orderItem.OrdersArticles.ArticlePrice = orderItem.Article.Price
+			orderItem.OrdersArticles.CreatedAt = time.Now().UTC()
+			orderItem.OrdersArticles.UpdatedAt = time.Now().UTC()
+			err = tx.Create(orderItem.OrdersArticles).Error
+			if err != nil {
+				return fmt.Errorf("can't create orders process fail when creating order item %s", orderItem.Article.Name)
+			}
+
+			totalOrderAmount += int64(orderItem.Quantity) * orderItem.ArticlePrice
+			finalOrderItemsID = append(finalOrderItemsID, orderItem.ID)
+		}
+
+		// we delete unused previous store orders articles
+		err = tx.Model(&OrdersArticles{}).Where("order_id = ? AND id NOT IN ?", order.ID, finalOrderItemsID).Delete(&OrdersArticles{}).Error
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+
+		order.TotalAmount = totalOrderAmount
+		order.UpdatedAt = time.Now().UTC()
+		return tx.Save(&order).Error
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &order, nil
 }
