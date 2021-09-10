@@ -60,6 +60,8 @@ func GetOrganisationOrdersHandler(ctx *gin.Context) {
 	offset = (offset - 1) * limit
 	orders, err := GetOrganisationOrders(uint(organisationID), state, limit, offset)
 	if err != nil {
+		log.Println(err)
+		ctx.String(http.StatusInternalServerError, "An error occur")
 		return
 	}
 
@@ -145,6 +147,8 @@ func GetWalletOrdersHandler(ctx *gin.Context) {
 	offset = (offset - 1) * limit
 	orders, err := GetWalletOrders(walletID, state, limit, offset)
 	if err != nil {
+		log.Println(err)
+		ctx.String(http.StatusInternalServerError, "An error occur")
 		return
 	}
 
@@ -229,6 +233,8 @@ func GetOrderHandler(ctx *gin.Context) {
 
 	orderArticles, err := GetOrderArticles(order.ID)
 	if err != nil {
+		log.Println(err)
+		ctx.String(http.StatusInternalServerError, "An error occur")
 		return
 	}
 
@@ -239,6 +245,8 @@ func GetOrderHandler(ctx *gin.Context) {
 
 	articles, err := GetArticles(articlesID)
 	if err != nil {
+		log.Println(err)
+		ctx.String(http.StatusInternalServerError, "An error occur")
 		return
 	}
 
@@ -254,6 +262,8 @@ func GetOrderHandler(ctx *gin.Context) {
 
 		pictures, err := GetArticlePictures(articleToSave.ID)
 		if err != nil {
+			log.Println(err)
+			ctx.String(http.StatusInternalServerError, "An error occur")
 			return
 		}
 		orderPresenter.Items = append(orderPresenter.Items, &OrderItemPresenter{
