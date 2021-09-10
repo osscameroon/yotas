@@ -34,7 +34,6 @@ type OrderDecision struct {
 }
 
 func GetOrganisationOrdersHandler(ctx *gin.Context) {
-
 	organisationID, err := strconv.Atoi(ctx.GetHeader("Tenant"))
 	if err != nil {
 		ctx.String(http.StatusBadRequest, ErrTenantNotProvided.Error())
@@ -67,7 +66,6 @@ func GetOrganisationOrdersHandler(ctx *gin.Context) {
 
 	var ordersPresenter []OrderPresenter
 	for orderIndex, order := range orders {
-
 		var orderPresenter OrderPresenter
 		orderPresenter.Orders = &orders[orderIndex]
 
@@ -123,7 +121,6 @@ func GetOrganisationOrdersHandler(ctx *gin.Context) {
 }
 
 func GetWalletOrdersHandler(ctx *gin.Context) {
-
 	// Initializing default
 	limit := 1
 	offset := 1
@@ -209,7 +206,6 @@ func GetWalletOrdersHandler(ctx *gin.Context) {
 }
 
 func GetOrderHandler(ctx *gin.Context) {
-
 	orderID, err := strconv.Atoi(ctx.Param("orderID"))
 	if err != nil {
 		ctx.String(http.StatusBadRequest, "Order id must be an int")
@@ -279,7 +275,6 @@ func GetOrderHandler(ctx *gin.Context) {
 }
 
 func CreateOrderHandler(ctx *gin.Context) {
-
 	organisationID, err := strconv.Atoi(ctx.GetHeader("Tenant"))
 	if err != nil || organisationID == 0 {
 		ctx.String(http.StatusBadRequest, ErrTenantNotProvided.Error())
@@ -330,7 +325,6 @@ func CreateOrderHandler(ctx *gin.Context) {
 }
 
 func DeleteOrderHandler(ctx *gin.Context) {
-
 	//TODO check if the user is the owner of the order or an admin
 	orderID, err := strconv.Atoi(ctx.Param("orderID"))
 	if err != nil {
@@ -363,7 +357,6 @@ func DeleteOrderHandler(ctx *gin.Context) {
 }
 
 func ProcessOrderHandler(ctx *gin.Context) {
-
 	//TODO check if the user is an admin of the organisation
 	var decision OrderDecision
 	err := ctx.BindJSON(&decision)
@@ -415,7 +408,6 @@ func ProcessOrderHandler(ctx *gin.Context) {
 }
 
 func PayOrderHandler(ctx *gin.Context) {
-
 	orderID, err := strconv.Atoi(ctx.Param("orderID"))
 	if err != nil {
 		ctx.String(http.StatusBadRequest, "Order id must be an int")
@@ -448,7 +440,6 @@ func PayOrderHandler(ctx *gin.Context) {
 }
 
 func UpdateOrderHandler(ctx *gin.Context) {
-
 	organisationID, err := strconv.Atoi(ctx.GetHeader("Tenant"))
 	if err != nil || organisationID == 0 {
 		ctx.String(http.StatusBadRequest, ErrTenantNotProvided.Error())

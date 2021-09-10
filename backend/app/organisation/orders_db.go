@@ -19,7 +19,6 @@ const (
 
 func CreateOrder(order *Orders, orderItems []*OrderItemPresenter) error {
 	return db.Session.Transaction(func(tx *gorm.DB) error {
-
 		// We first create the order
 		order.State = string(orderStateNotPaid)
 		order.CreatedAt = time.Now().UTC()
@@ -66,7 +65,6 @@ func GetOrder(orderID uint) (*Orders, error) {
 }
 
 func GetWalletOrders(walletID string, orderStateFilter OrderState, limit int, offset int) ([]Orders, error) {
-
 	results := []Orders{}
 	req := db.Session.Model(&Orders{}).
 		Joins("JOIN wallets on wallets.wallet_id = orders.wallet_id and orders.wallet_id = ?", walletID)
@@ -104,9 +102,7 @@ func GetOrderArticles(orderID uint) ([]OrdersArticles, error) {
 }
 
 func DeclineOrder(orderID uint, reason string) error {
-
 	err := db.Session.Transaction(func(tx *gorm.DB) error {
-
 		var order Orders
 		err := tx.Model(&Orders{}).Where("id = ?", orderID).First(&order).Error
 		if err != nil {
@@ -154,7 +150,6 @@ func AcceptOrder(orderID uint, reason string) error {
 
 func PayOrder(orderID uint) error {
 	err := db.Session.Transaction(func(tx *gorm.DB) error {
-
 		var order Orders
 		err := tx.Model(&Orders{}).Where("id = ?", orderID).First(&order).Error
 		if err != nil {
@@ -205,7 +200,6 @@ func DeleteOrder(orderID uint) error {
 }
 
 func UpdateOrder(orderID uint, orderItems []*OrderItemPresenter) (*Orders, error) {
-
 	var order Orders
 	err := db.Session.Transaction(func(tx *gorm.DB) error {
 		err := tx.Model(&Orders{}).Where("id = ?", orderID).First(&order).Error
