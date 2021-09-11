@@ -22,17 +22,14 @@ services:
       - .:/start-postgres
 
   api:
-    build: ./
     depends_on:
       - start-postgres
-    environment:
-      BASE_URI: api/
-      PORT: 9999
-      PG_HOST: postgres
-      PG_DBNAME: yotas
-      PG_USER: yotas
-      PG_PASSWORD: yotas
-      PG_PORT: 5432
+    image: golang:stretch
+    command: ["/bin/bash", "-c", "cd /api/ && make run"]
+    env_file:
+      - ./dev/setup-postgres/env
+    volumes:
+      - .:/api
 
     ports:
       - 9999:9999
