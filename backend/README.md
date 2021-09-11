@@ -5,26 +5,50 @@ This is the backend of the Yotas system.
 
 ## Requirements
 
-- golang
+- golang, get golang [here](https://golang.org/dl/)
+- docker, get docker [here](https://docs.docker.com/get-docker/)
 - make
 - Running on a PostgreSQL Database
 
 
 ## How to install
+Once you have installed docker and the latest version of golang, start the project with:
 
-- Install posgresql for your OS (or use a docker image).
-- Install goose in the project : `make install_goose`
-- Set postgresql:
-    - Enter the postgresql CLI mode : `sudo -i -u postgres` then hit `psql`
-    - create your database : `CREATE DATABASE yotas;`
-    - create the default user's credentials for that database : `CREATE USER yotas WITH PASSWORD 'yotas';`
-    - add the user to the database : `GRANT ALL ON DATABASE yotas TO yotas;`
+```terminal
+make start-api
+```
 
-- Set up your migrations
+To teardown the api and its dependencies run:
+```terminal
+make stop-api
+```
 
-## How to start
+#### To run only the postgres database
 
-- `git clone https://github.com/osscameroon/yotas`
-- Copy `.env.example` to `.env` and configure with correct parameters
-- Make sure the postgreSQL server is up and running
-- hit : `make run`
+```terminal
+make start-postgres
+```
+
+#### To run the api without its dependencies run
+
+```terminal
+make run
+```
+
+#### To connect to the postgres db run
+
+```terminal
+make connect-postgres
+```
+
+#### To delete every tables in the db run
+
+```terminal
+make clean-postgres
+```
+
+#### To stop the postgres database
+
+```terminal
+make stop-postgres
+```
