@@ -1,0 +1,8 @@
+fixtures/yotas_users.sql
+fixtures/yotas_public_organisations.sql
+fixtures/yotas_organisations_users.sql
+fixtures/yotas_public_articles.sql
+fixtures/yotas_public_organisations_articles.sql
+fixtures/yotas_public_pictures.sql
+fixtures/yotas_public_articles_pictures.sql
+fixtures/yotas_wallets.sql

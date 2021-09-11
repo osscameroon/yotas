@@ -10,11 +10,21 @@ services:
       POSTGRES_USER: yotas
     ports:
       - 5432:5432
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+
+  start-postgres:
+    depends_on:
+      - postgres
+    image: golang:stretch
+    command: ["/start-postgres/dev/scripts/wait-for-it/wait-for-it.sh", "postgres:5432", "--", "/start-postgres/dev/setup-postgres/setup-postgres.sh"]
+    volumes:
+      - .:/start-postgres
 
   api:
     build: ./
     depends_on:
-      - postgres
+      - start-postgres
     environment:
       BASE_URI: api/
       PORT: 9999
