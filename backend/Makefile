@@ -1,5 +1,5 @@
 .PHONY: build help clean lint test start-postgres goose_up goose_down fmt build-docker
-.PHONY: stop-postgres clean-postgres
+.PHONY: stop-postgres clean-postgres stop-api start-api connect-api
 .DEFAULT_GOAL := help
 
 BINARYNAME=yotas
@@ -39,6 +39,15 @@ ifeq (, $(shell which goose))
 	$(call install_goose)
 endif
 	cd ./scripts/ && ./goose_down.sh
+
+## start-api: starts the api and its dependencies in a docker container
+start-api:
+	docker-compose up
+
+## stop-api: stops the api and its dependencies in a docker container
+stop-api:
+	docker-compose down && \
+	rm -rf postgres-data
 
 ## start-postgres: starts postgres sql, setup and populate yotas database
 start-postgres:
