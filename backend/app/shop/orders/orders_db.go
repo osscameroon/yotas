@@ -1,9 +1,9 @@
-package organisation
+package orders
 
 import (
 	"errors"
 	"fmt"
-	"github.com/osscameroon/yotas/db"
+	"github.com/osscameroon/yotas/app"
 	"gorm.io/gorm"
 	"time"
 )
@@ -17,8 +17,8 @@ const (
 	orderStateDeclined OrderState = "declined"
 )
 
-func CreateOrder(order *Orders, orderItems []*OrderItemPresenter) error {
-	return db.Session.Transaction(func(tx *gorm.DB) error {
+func CreateOrder(order *app.Orders, orderItems []*app.OrderItemPresenter) error {
+	return app.Session.Transaction(func(tx *gorm.DB) error {
 		// We first create the order
 		order.State = string(orderStateNotPaid)
 		order.CreatedAt = time.Now().UTC()
@@ -38,7 +38,7 @@ func CreateOrder(order *Orders, orderItems []*OrderItemPresenter) error {
 			orderArticle.CreatedAt = time.Now().UTC()
 			err = tx.Create(orderArticle.OrdersArticles).Error
 			if err != nil {
-				return fmt.Errorf("can't create orders process fail when creating order item %s", orderArticle.Article.Name)
+				return fmt.Errorf("can't create shop process fail when creating order item %s", orderArticle.Article.Name)
 			}
 		}
 
@@ -54,9 +54,9 @@ func CreateOrder(order *Orders, orderItems []*OrderItemPresenter) error {
 	})
 }
 
-func GetOrder(orderID uint) (*Orders, error) {
-	var order Orders
-	result := db.Session.Where("id = ?", orderID).First(&order)
+func GetOrder(orderID uint) (*app.Orders, error) {
+	var order app.Orders
+	result := app.Session.Where("id = ?", orderID).First(&order)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -64,10 +64,10 @@ func GetOrder(orderID uint) (*Orders, error) {
 	return &order, nil
 }
 
-func GetWalletOrders(walletID string, orderStateFilter OrderState, limit int, offset int) ([]Orders, error) {
-	results := []Orders{}
-	req := db.Session.Model(&Orders{}).
-		Joins("JOIN wallets on wallets.wallet_id = orders.wallet_id and orders.wallet_id = ?", walletID)
+func GetWalletOrders(walletID string, orderStateFilter OrderState, limit int, offset int) ([]app.Orders, error) {
+	var results []app.Orders
+	req := app.Session.Model(&app.Orders{}).
+		Joins("JOIN wallets on wallets.wallet_id = shop.wallet_id and shop.wallet_id = ?", walletID)
 
 	if string(orderStateFilter) != "" {
 		req = req.Where("state = ?", string(orderStateFilter))
@@ -78,10 +78,10 @@ func GetWalletOrders(walletID string, orderStateFilter OrderState, limit int, of
 	return results, err
 }
 
-func GetOrganisationOrders(organisationID uint, orderStateFilter OrderState, limit int, offset int) ([]Orders, error) {
-	results := []Orders{}
-	req := db.Session.Model(&Orders{}).
-		Joins("JOIN wallets on wallets.wallet_id = orders.wallet_id and wallets.organisation_id = ?", organisationID)
+func GetOrganisationOrders(organisationID uint, orderStateFilter OrderState, limit int, offset int) ([]app.Orders, error) {
+	var results []app.Orders
+	req := app.Session.Model(&app.Orders{}).
+		Joins("JOIN wallets on wallets.wallet_id = shop.wallet_id and wallets.organisation_id = ?", organisationID)
 
 	if string(orderStateFilter) != "" {
 		req = req.Where("state = ?", string(orderStateFilter))
@@ -92,9 +92,9 @@ func GetOrganisationOrders(organisationID uint, orderStateFilter OrderState, lim
 	return results, err
 }
 
-func GetOrderArticles(orderID uint) ([]OrdersArticles, error) {
-	results := []OrdersArticles{}
-	err := db.Session.Model(&OrdersArticles{}).
+func GetOrderArticles(orderID uint) ([]app.OrdersArticles, error) {
+	var results []app.OrdersArticles
+	err := app.Session.Model(&app.OrdersArticles{}).
 		Where("order_id = ?", orderID).
 		Scan(&results).Error
 
@@ -102,9 +102,9 @@ func GetOrderArticles(orderID uint) ([]OrdersArticles, error) {
 }
 
 func DeclineOrder(orderID uint, reason string) error {
-	err := db.Session.Transaction(func(tx *gorm.DB) error {
-		var order Orders
-		err := tx.Model(&Orders{}).Where("id = ?", orderID).First(&order).Error
+	err := app.Session.Transaction(func(tx *gorm.DB) error {
+		var order app.Orders
+		err := tx.Model(&app.Orders{}).Where("id = ?", orderID).First(&order).Error
 		if err != nil {
 			return errors.New("can't find order")
 		}
@@ -127,9 +127,9 @@ func DeclineOrder(orderID uint, reason string) error {
 }
 
 func AcceptOrder(orderID uint, reason string) error {
-	err := db.Session.Transaction(func(tx *gorm.DB) error {
-		var order Orders
-		err := tx.Model(&Orders{}).Where("id = ?", orderID).First(&order).Error
+	err := app.Session.Transaction(func(tx *gorm.DB) error {
+		var order app.Orders
+		err := tx.Model(&app.Orders{}).Where("id = ?", orderID).First(&order).Error
 		if err != nil {
 			return errors.New("can't find order")
 		}
@@ -149,16 +149,16 @@ func AcceptOrder(orderID uint, reason string) error {
 }
 
 func PayOrder(orderID uint) error {
-	err := db.Session.Transaction(func(tx *gorm.DB) error {
-		var order Orders
-		err := tx.Model(&Orders{}).Where("id = ?", orderID).First(&order).Error
+	err := app.Session.Transaction(func(tx *gorm.DB) error {
+		var order app.Orders
+		err := tx.Model(&app.Orders{}).Where("id = ?", orderID).First(&order).Error
 		if err != nil {
 			return errors.New("can't find order")
 		}
 
 		// check if the wallet has enough yotas to pay the order
-		var wallet Wallets
-		err = tx.Model(&Wallets{}).Where("wallet_id = ?", order.WalletId).First(&wallet).Error
+		var wallet app.Wallets
+		err = tx.Model(&app.Wallets{}).Where("wallet_id = ?", order.WalletId).First(&wallet).Error
 		if err != nil {
 			return errors.New("can't find user wallet")
 		}
@@ -183,13 +183,13 @@ func PayOrder(orderID uint) error {
 }
 
 func DeleteOrder(orderID uint) error {
-	err := db.Session.Transaction(func(tx *gorm.DB) error {
-		err := tx.Model(&OrdersArticles{}).Where("order_id = ?", orderID).Update("deleted_at", time.Now().UTC()).Error
+	err := app.Session.Transaction(func(tx *gorm.DB) error {
+		err := tx.Model(&app.OrdersArticles{}).Where("order_id = ?", orderID).Update("deleted_at", time.Now().UTC()).Error
 		if err != nil {
 			return errors.New("can't delete order items")
 		}
 
-		err = tx.Model(&Orders{}).Where("id = ?", orderID).Update("deleted_at", time.Now().UTC()).Error
+		err = tx.Model(&app.Orders{}).Where("id = ?", orderID).Update("deleted_at", time.Now().UTC()).Error
 		if err != nil {
 			return errors.New("can't delete order")
 		}
@@ -199,16 +199,16 @@ func DeleteOrder(orderID uint) error {
 	return err
 }
 
-func UpdateOrder(orderID uint, orderItems []*OrderItemPresenter) (*Orders, error) {
-	var order Orders
-	err := db.Session.Transaction(func(tx *gorm.DB) error {
-		err := tx.Model(&Orders{}).Where("id = ?", orderID).First(&order).Error
+func UpdateOrder(orderID uint, orderItems []*app.OrderItemPresenter) (*app.Orders, error) {
+	var order app.Orders
+	err := app.Session.Transaction(func(tx *gorm.DB) error {
+		err := tx.Model(&app.Orders{}).Where("id = ?", orderID).First(&order).Error
 		if err != nil {
 			return err
 		}
 
-		var storedOrderArticles []OrdersArticles
-		err = tx.Model(&OrdersArticles{}).
+		var storedOrderArticles []app.OrdersArticles
+		err = tx.Model(&app.OrdersArticles{}).
 			Where("order_id = ?", orderID).
 			Scan(&storedOrderArticles).Error
 		if err != nil {
@@ -254,15 +254,15 @@ func UpdateOrder(orderID uint, orderItems []*OrderItemPresenter) (*Orders, error
 			orderItem.OrdersArticles.UpdatedAt = time.Now().UTC()
 			err = tx.Create(orderItem.OrdersArticles).Error
 			if err != nil {
-				return fmt.Errorf("can't create orders process fail when creating order item %s", orderItem.Article.Name)
+				return fmt.Errorf("can't create shop process fail when creating order item %s", orderItem.Article.Name)
 			}
 
 			totalOrderAmount += int64(orderItem.Quantity) * orderItem.ArticlePrice
 			finalOrderItemsID = append(finalOrderItemsID, orderItem.ID)
 		}
 
-		// we delete unused previous store orders articles
-		err = tx.Model(&OrdersArticles{}).Where("order_id = ? AND id NOT IN ?", order.ID, finalOrderItemsID).Delete(&OrdersArticles{}).Error
+		// we delete unused previous store shop articles
+		err = tx.Model(&app.OrdersArticles{}).Where("order_id = ? AND id NOT IN ?", order.ID, finalOrderItemsID).Delete(&app.OrdersArticles{}).Error
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			return err
 		}

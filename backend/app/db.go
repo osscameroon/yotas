@@ -1,11 +1,10 @@
-package db
+package app
 
 import (
 	"fmt"
 	"log"
 	"time"
 
-	"github.com/osscameroon/yotas/app"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -26,7 +25,7 @@ func Init() {
 
 	params := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
-		app.Env.PgHost, app.Env.PgUser, app.Env.PgPassword, app.Env.PgDbName, app.Env.PgPort,
+		Env.PgHost, Env.PgUser, Env.PgPassword, Env.PgDbName, Env.PgPort,
 	)
 
 	Session, err = gorm.Open(postgres.Open(params), &gorm.Config{})

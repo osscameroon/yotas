@@ -1,9 +1,11 @@
-package organisation
+package orders
 
 import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/osscameroon/yotas/app"
+	articles2 "github.com/osscameroon/yotas/app/shop/articles"
 	"gorm.io/gorm"
 	"log"
 	"net/http"
@@ -18,25 +20,11 @@ var orderFilterCriteria = map[string]OrderState{
 	"declined":  orderStateDeclined,
 }
 
-type OrderPresenter struct {
-	*Orders
-	Items []*OrderItemPresenter `json:"items"`
-}
-
-type OrderItemPresenter struct {
-	*OrdersArticles
-	Article ArticlesPresenter `json:"article"`
-}
-
-type OrderDecision struct {
-	Accepted bool   `json:"accepted"`
-	Reason   string `json:"reason"`
-}
-
+// GetOrganisationOrdersHandler Handler for organisation Orders
 func GetOrganisationOrdersHandler(ctx *gin.Context) {
 	organisationID, err := strconv.Atoi(ctx.GetHeader("Tenant"))
 	if err != nil {
-		ctx.String(http.StatusBadRequest, ErrTenantNotProvided.Error())
+		ctx.String(http.StatusBadRequest, articles2.ErrTenantNotProvided.Error())
 		return
 	}
 
@@ -64,9 +52,9 @@ func GetOrganisationOrdersHandler(ctx *gin.Context) {
 		return
 	}
 
-	var ordersPresenter []OrderPresenter
+	var ordersPresenter []app.OrderPresenter
 	for orderIndex, order := range orders {
-		var orderPresenter OrderPresenter
+		var orderPresenter app.OrderPresenter
 		orderPresenter.Orders = &orders[orderIndex]
 
 		orderArticles, err := GetOrderArticles(order.ID)
@@ -79,28 +67,28 @@ func GetOrganisationOrdersHandler(ctx *gin.Context) {
 			articlesID = append(articlesID, article.ArticleID)
 		}
 
-		articles, err := GetArticles(articlesID)
+		articlesList, err := articles2.GetArticles(articlesID)
 		if err != nil {
 			return
 		}
 
 		for orderArticleIndex, orderArticle := range orderArticles {
 			// search for articles
-			var articleToSave Articles
-			for _, article := range articles {
+			var articleToSave app.Articles
+			for _, article := range articlesList {
 				if article.ID == orderArticle.ArticleID {
 					articleToSave = article
 					break
 				}
 			}
 
-			pictures, err := GetArticlePictures(articleToSave.ID)
+			pictures, err := articles2.GetArticlePictures(articleToSave.ID)
 			if err != nil {
 				return
 			}
-			orderPresenter.Items = append(orderPresenter.Items, &OrderItemPresenter{
+			orderPresenter.Items = append(orderPresenter.Items, &app.OrderItemPresenter{
 				OrdersArticles: &orderArticles[orderArticleIndex],
-				Article: ArticlesPresenter{
+				Article: app.ArticlesPresenter{
 					Articles: articleToSave,
 					Pictures: pictures,
 				},
@@ -111,7 +99,7 @@ func GetOrganisationOrdersHandler(ctx *gin.Context) {
 
 	if len(ordersPresenter) == 0 {
 		// to avoid return nil
-		ordersPresenter = []OrderPresenter{}
+		ordersPresenter = []app.OrderPresenter{}
 	}
 	ctx.JSON(http.StatusOK, map[string]interface{}{
 		"limit":  limit,
@@ -149,9 +137,9 @@ func GetWalletOrdersHandler(ctx *gin.Context) {
 		return
 	}
 
-	var ordersPresenter []OrderPresenter
+	var ordersPresenter []app.OrderPresenter
 	for orderIndex, order := range orders {
-		var orderPresenter OrderPresenter
+		var orderPresenter app.OrderPresenter
 		orderPresenter.Orders = &orders[orderIndex]
 
 		orderArticles, err := GetOrderArticles(order.ID)
@@ -164,28 +152,28 @@ func GetWalletOrdersHandler(ctx *gin.Context) {
 			articlesID = append(articlesID, article.ArticleID)
 		}
 
-		articles, err := GetArticles(articlesID)
+		articlesList, err := articles2.GetArticles(articlesID)
 		if err != nil {
 			return
 		}
 
 		for orderArticleIndex, orderArticle := range orderArticles {
 			// search for articles
-			var articleToSave Articles
-			for _, article := range articles {
+			var articleToSave app.Articles
+			for _, article := range articlesList {
 				if article.ID == orderArticle.ArticleID {
 					articleToSave = article
 					break
 				}
 			}
 
-			pictures, err := GetArticlePictures(articleToSave.ID)
+			pictures, err := articles2.GetArticlePictures(articleToSave.ID)
 			if err != nil {
 				return
 			}
-			orderPresenter.Items = append(orderPresenter.Items, &OrderItemPresenter{
+			orderPresenter.Items = append(orderPresenter.Items, &app.OrderItemPresenter{
 				OrdersArticles: &orderArticles[orderArticleIndex],
-				Article: ArticlesPresenter{
+				Article: app.ArticlesPresenter{
 					Articles: articleToSave,
 					Pictures: pictures,
 				},
@@ -196,7 +184,7 @@ func GetWalletOrdersHandler(ctx *gin.Context) {
 
 	if len(ordersPresenter) == 0 {
 		// to avoid return nil
-		ordersPresenter = []OrderPresenter{}
+		ordersPresenter = []app.OrderPresenter{}
 	}
 	ctx.JSON(http.StatusOK, map[string]interface{}{
 		"limit":  limit,
@@ -224,7 +212,7 @@ func GetOrderHandler(ctx *gin.Context) {
 		return
 	}
 
-	orderPresenter := OrderPresenter{}
+	orderPresenter := app.OrderPresenter{}
 	orderPresenter.Orders = order
 
 	orderArticles, err := GetOrderArticles(order.ID)
@@ -239,7 +227,7 @@ func GetOrderHandler(ctx *gin.Context) {
 		articlesID = append(articlesID, orderArticle.ArticleID)
 	}
 
-	articles, err := GetArticles(articlesID)
+	articlesList, err := articles2.GetArticles(articlesID)
 	if err != nil {
 		log.Println(err)
 		ctx.String(http.StatusInternalServerError, "An error occur")
@@ -248,23 +236,23 @@ func GetOrderHandler(ctx *gin.Context) {
 
 	for _, orderArticle := range orderArticles {
 		// search for articles
-		var articleToSave Articles
-		for _, article := range articles {
+		var articleToSave app.Articles
+		for _, article := range articlesList {
 			if article.ID == orderArticle.ArticleID {
 				articleToSave = article
 				break
 			}
 		}
 
-		pictures, err := GetArticlePictures(articleToSave.ID)
+		pictures, err := articles2.GetArticlePictures(articleToSave.ID)
 		if err != nil {
 			log.Println(err)
 			ctx.String(http.StatusInternalServerError, "An error occur")
 			return
 		}
-		orderPresenter.Items = append(orderPresenter.Items, &OrderItemPresenter{
+		orderPresenter.Items = append(orderPresenter.Items, &app.OrderItemPresenter{
 			OrdersArticles: &orderArticle,
-			Article: ArticlesPresenter{
+			Article: app.ArticlesPresenter{
 				Articles: articleToSave,
 				Pictures: pictures,
 			},
@@ -277,11 +265,11 @@ func GetOrderHandler(ctx *gin.Context) {
 func CreateOrderHandler(ctx *gin.Context) {
 	organisationID, err := strconv.Atoi(ctx.GetHeader("Tenant"))
 	if err != nil || organisationID == 0 {
-		ctx.String(http.StatusBadRequest, ErrTenantNotProvided.Error())
+		ctx.String(http.StatusBadRequest, articles2.ErrTenantNotProvided.Error())
 		return
 	}
 
-	order := OrderPresenter{}
+	order := app.OrderPresenter{}
 	err = ctx.BindJSON(&order)
 	if err != nil {
 		ctx.String(http.StatusNotAcceptable, "Bad content")
@@ -296,7 +284,7 @@ func CreateOrderHandler(ctx *gin.Context) {
 	// Check if each article belong to this organisation
 	providedArticle := map[uint]uint{}
 	for _, item := range order.Items {
-		article, err := GetOrganisationArticle(item.ArticleID, uint(organisationID))
+		article, err := articles2.GetOrganisationArticle(item.ArticleID, uint(organisationID))
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, map[string]interface{}{"messages": []string{
 				fmt.Sprintf("The %v item doesn't belong to this organisation", item.ArticleID)}})
@@ -312,7 +300,7 @@ func CreateOrderHandler(ctx *gin.Context) {
 
 		providedArticle[item.ArticleID] = item.ArticleID
 		item.Article.Articles = *article
-		item.Article.Pictures, _ = GetArticlePictures(item.ArticleID)
+		item.Article.Pictures, _ = articles2.GetArticlePictures(item.ArticleID)
 	}
 
 	err = CreateOrder(order.Orders, order.Items)
@@ -358,7 +346,7 @@ func DeleteOrderHandler(ctx *gin.Context) {
 
 func ProcessOrderHandler(ctx *gin.Context) {
 	//TODO check if the user is an admin of the organisation
-	var decision OrderDecision
+	var decision app.OrderDecision
 	err := ctx.BindJSON(&decision)
 	if err != nil {
 		ctx.String(http.StatusNotAcceptable, "Bad content")
@@ -442,7 +430,7 @@ func PayOrderHandler(ctx *gin.Context) {
 func UpdateOrderHandler(ctx *gin.Context) {
 	organisationID, err := strconv.Atoi(ctx.GetHeader("Tenant"))
 	if err != nil || organisationID == 0 {
-		ctx.String(http.StatusBadRequest, ErrTenantNotProvided.Error())
+		ctx.String(http.StatusBadRequest, articles2.ErrTenantNotProvided.Error())
 		return
 	}
 
@@ -468,7 +456,7 @@ func UpdateOrderHandler(ctx *gin.Context) {
 		return
 	}
 
-	var orderPresenter OrderPresenter
+	var orderPresenter app.OrderPresenter
 	err = ctx.BindJSON(&orderPresenter)
 	if err != nil {
 		ctx.String(http.StatusNotAcceptable, "Bad content")
@@ -483,7 +471,7 @@ func UpdateOrderHandler(ctx *gin.Context) {
 	// Check if each article belong to this organisation
 	providedArticle := map[uint]uint{}
 	for _, item := range orderPresenter.Items {
-		article, err := GetOrganisationArticle(item.ArticleID, uint(organisationID))
+		article, err := articles2.GetOrganisationArticle(item.ArticleID, uint(organisationID))
 		if err != nil {
 			ctx.String(http.StatusBadRequest, fmt.Sprintf("The %v item doesn't belong to this organisation", item.ArticleID))
 			return
@@ -497,7 +485,7 @@ func UpdateOrderHandler(ctx *gin.Context) {
 
 		providedArticle[item.ArticleID] = item.ArticleID
 		item.Article.Articles = *article
-		item.Article.Pictures, _ = GetArticlePictures(item.ArticleID)
+		item.Article.Pictures, _ = articles2.GetArticlePictures(item.ArticleID)
 	}
 
 	updatedOrder, err := UpdateOrder(order.ID, orderPresenter.Items)

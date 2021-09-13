@@ -1,4 +1,4 @@
-package organisation
+package orders
 
 import (
 	"crypto/sha256"
@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/osscameroon/yotas/db"
+	"github.com/osscameroon/yotas/app"
 	"gorm.io/gorm"
 	"time"
 )
@@ -22,7 +22,7 @@ const (
 //	CreateOperation create an operation
 //	If you create the operation inside a transaction, you must provide the transaction pointer to the param transaction
 //	If not you can set it to nil (we will internally use the default db.Session to create operation)
-func CreateOperation(transaction *gorm.DB, walletID string, operationType OperationType, amount int64, description string) (*Operations, error) {
+func CreateOperation(transaction *gorm.DB, walletID string, operationType OperationType, amount int64, description string) (*app.Operations, error) {
 	switch operationType {
 	case operationTypeRefund, operationTypeCredit, operationTypeDebit:
 		break
@@ -31,21 +31,21 @@ func CreateOperation(transaction *gorm.DB, walletID string, operationType Operat
 	}
 
 	if transaction == nil {
-		transaction = db.Session
+		transaction = app.Session
 	}
 
-	var operationResult *Operations
+	var operationResult *app.Operations
 	err := transaction.Transaction(func(tx *gorm.DB) error {
 		// get the wallet
-		var wallet Wallets
-		err := tx.Model(&Wallets{}).Where("wallet_id = ?", walletID).First(&wallet).Error
+		var wallet app.Wallets
+		err := tx.Model(&app.Wallets{}).Where("wallet_id = ?", walletID).First(&wallet).Error
 		if err != nil {
 			return errors.New("can't find the wallet")
 		}
 
 		// create the operation without the operation hash
-		operation := Operations{
-			Model:         db.Model{CreatedAt: time.Now().UTC(), UpdatedAt: time.Now().UTC()},
+		operation := app.Operations{
+			Model:         app.Model{CreatedAt: time.Now().UTC(), UpdatedAt: time.Now().UTC()},
 			Amount:        amount,
 			WalletId:      walletID,
 			Description:   description,
@@ -63,8 +63,8 @@ func CreateOperation(transaction *gorm.DB, walletID string, operationType Operat
 		finalHash := ""
 
 		//  we check if we have previous operations
-		lastOperation := Operations{}
-		err = tx.Model(&Operations{}).Where("id != ?", operation.ID).Order("created_at DESC").First(&lastOperation).Error
+		lastOperation := app.Operations{}
+		err = tx.Model(&app.Operations{}).Where("id != ?", operation.ID).Order("created_at DESC").First(&lastOperation).Error
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			return errors.New("can't create operation")
 		} else if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -82,7 +82,7 @@ func CreateOperation(transaction *gorm.DB, walletID string, operationType Operat
 		}
 
 		// we omit the field updated_at because we don't want his value to change automatically by gorm
-		err = tx.Model(&Operations{}).Where("id = ?", operation.ID).Omit("updated_at").Update("operation_hash", finalHash).Error
+		err = tx.Model(&app.Operations{}).Where("id = ?", operation.ID).Omit("updated_at").Update("operation_hash", finalHash).Error
 		if err != nil {
 			return errors.New("can't create operation")
 		}
@@ -123,7 +123,7 @@ func CreateOperation(transaction *gorm.DB, walletID string, operationType Operat
 }
 
 //generateOperationHash generate a hash for an operation
-func generateOperationHash(operations Operations) (string, error) {
+func generateOperationHash(operations app.Operations) (string, error) {
 	operations.OperationHash = ""
 	jsonStr, err := json.Marshal(operations)
 	if err != nil {
@@ -137,7 +137,7 @@ func generateOperationHash(operations Operations) (string, error) {
 }
 
 //combineOperationHash is used to combine hash of a previous operation within a hash for a current operation
-func combineOperationHash(previousHash string, operations Operations) (string, error) {
+func combineOperationHash(previousHash string, operations app.Operations) (string, error) {
 	operations.OperationHash = ""
 	jsonStr, err := json.Marshal(operations)
 	if err != nil {

@@ -1,11 +1,7 @@
-package organisation
-
-import (
-	"github.com/osscameroon/yotas/db"
-)
+package app
 
 type Organisations struct {
-	db.Model
+	Model
 	Name        string `json:"name"`
 	Email       string `json:"email"`
 	GithubId    string `json:"github_id"`
@@ -15,20 +11,20 @@ type Organisations struct {
 }
 
 type OrganisationsArticles struct {
-	db.Model
+	Model
 	OrganisationId uint `json:"organisation_id"`
 	ArticleId      uint `json:"article_id"`
 }
 
 type OrganisationsUsers struct {
-	db.Model
+	Model
 	OrganisationId uint `json:"organisation_id"`
 	UserId         uint `json:"user_id"`
 	Active         bool `json:"active"`
 }
 
 type Wallets struct {
-	db.Model
+	Model
 	WalletId       string `json:"wallet_id"`
 	UserId         uint   `json:"user_id"`
 	OrganisationId uint   `json:"organisation_id"`
@@ -36,7 +32,7 @@ type Wallets struct {
 }
 
 type Operations struct {
-	db.Model
+	Model
 	Amount        int64  `json:"amount"`
 	Description   string `json:"description"`
 	WalletId      string `json:"wallet_id"`
@@ -46,7 +42,7 @@ type Operations struct {
 }
 
 type Orders struct {
-	db.Model
+	Model
 	WalletId    string `json:"wallet_id"`
 	TotalAmount int64  `json:"total_amount"`
 	State       string `json:"state"`
@@ -54,15 +50,30 @@ type Orders struct {
 }
 
 type OrdersArticles struct {
-	db.Model
+	Model
 	OrderID      uint  `json:"order_id"`
 	ArticleID    uint  `json:"article_id"`
 	ArticlePrice int64 `json:"article_price"`
 	Quantity     int   `json:"quantity"`
 }
 
+type OrderPresenter struct {
+	*Orders
+	Items []*OrderItemPresenter `json:"items"`
+}
+
+type OrderItemPresenter struct {
+	*OrdersArticles
+	Article ArticlesPresenter `json:"article"`
+}
+
+type OrderDecision struct {
+	Accepted bool   `json:"accepted"`
+	Reason   string `json:"reason"`
+}
+
 type Articles struct {
-	db.Model
+	Model
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Quantity    int64  `json:"quantity"`
@@ -71,7 +82,7 @@ type Articles struct {
 }
 
 type Pictures struct {
-	db.Model
+	Model
 	OrganisationId uint   `json:"organisation_id"`
 	AltText        string `json:"alt_text"`
 	Original       string `json:"original"`
@@ -81,7 +92,30 @@ type Pictures struct {
 }
 
 type ArticlesPictures struct {
-	db.Model
+	Model
 	PictureId uint `json:"picture_id"`
 	ArticleId uint `json:"article_id"`
+}
+
+type ArticlesPresenter struct {
+	Articles
+	Pictures []Pictures `json:"pictures"`
+}
+
+type Users struct {
+	Model
+	Name        string `json:"name"`
+	Email       string `json:"email"`
+	GithubId    string `json:"github_id"`
+	GithubToken string `json:"github_token"`
+	AvatarUrl   string `json:"avatar_url"`
+}
+
+type UsersPresenter struct {
+	Users
+}
+
+type Callback struct {
+	Code  string `json:"code"`
+	State string `json:"state"`
 }

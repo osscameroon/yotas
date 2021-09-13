@@ -11,19 +11,4 @@ func OrganisationRouter() {
 	router.POST("/organisations", OrganisationsAllHandler)
 	router.GET("/organisations/{organisation_id}", OrganisationsHandler)
 	router.PATCH("/organisations/{organisation_id}", OrganisationsHandler)
-
-	router.GET("/articles", GetOrganisationArticlesHandler)
-	router.POST("/articles", CreateArticleHandler)
-	router.GET("/articles/:articleID", GetArticleHandler)
-	router.PUT("/articles/:articleID", UpdateArticleHandler)
-	router.DELETE("/articles/:articleID", DeleteArticleHandler)
-
-	router.GET("/orders", GetOrganisationOrdersHandler)
-	router.GET("/orders/wallet", GetWalletOrdersHandler)
-	router.GET("/orders/:orderID", GetOrderHandler)
-	router.POST("/orders", CreateOrderHandler)
-	router.POST("/orders/:orderID/process", ProcessOrderHandler)
-	router.POST("/orders/:orderID/pay", PayOrderHandler)
-	router.PUT("/orders/:orderID", UpdateOrderHandler)
-	router.DELETE("/orders/:orderID", DeleteOrderHandler)
 }

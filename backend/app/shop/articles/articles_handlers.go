@@ -1,8 +1,9 @@
-package organisation
+package articles
 
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"github.com/osscameroon/yotas/app"
 	"gorm.io/gorm"
 	"net/http"
 	"strconv"
@@ -16,12 +17,7 @@ var organisationArticlesSortCriteria = map[string]string{
 	"name":       "name",
 }
 
-var ErrTenantNotProvided error = errors.New("you must provide Tenant (organisation id) on Header")
-
-type ArticlesPresenter struct {
-	Articles
-	Pictures []Pictures `json:"pictures"`
-}
+var ErrTenantNotProvided = errors.New("you must provide Tenant (organisation id) on Header")
 
 //CreateArticleHandler is a handler for CreateArticle
 func CreateArticleHandler(ctx *gin.Context) {
@@ -36,7 +32,7 @@ func CreateArticleHandler(ctx *gin.Context) {
 		return
 	}
 
-	article := ArticlesPresenter{}
+	article := app.ArticlesPresenter{}
 	err = ctx.BindJSON(&article)
 	if err != nil {
 		ctx.String(http.StatusNotAcceptable, "You must provide an Articles in json format on the body")
@@ -57,13 +53,13 @@ func CreateArticleHandler(ctx *gin.Context) {
 		return
 	}
 
-	var savedPictures []Pictures
+	var savedPictures []app.Pictures
 	var picturesIDToSaved []uint
 	for i := 0; i < len(article.Pictures); i++ {
 		pictureID := article.Pictures[i].ID
 
 		// If the Pictures not exist an not linked to the Organisations we skip the Pictures
-		pic, err := GetOrganisationPicture(pictureID, uint(organisationID))
+		pic, err := app.GetOrganisationPicture(pictureID, uint(organisationID))
 		if err != nil {
 			continue
 		}
@@ -74,7 +70,7 @@ func CreateArticleHandler(ctx *gin.Context) {
 
 	err = CreateArticlePictures(article.ID, picturesIDToSaved)
 	if err != nil {
-		article.Pictures = []Pictures{}
+		article.Pictures = []app.Pictures{}
 	}
 
 	article.Pictures = savedPictures
@@ -107,7 +103,7 @@ func GetArticleHandler(ctx *gin.Context) {
 		return
 	}
 
-	result := ArticlesPresenter{Articles: *article}
+	result := app.ArticlesPresenter{Articles: *article}
 	result.Pictures, _ = GetArticlePictures(uint(articleID))
 
 	ctx.JSON(http.StatusOK, result)
@@ -166,7 +162,7 @@ func GetOrganisationArticlesHandler(ctx *gin.Context) {
 		return
 	}
 
-	results := make([]ArticlesPresenter, len(articles))
+	results := make([]app.ArticlesPresenter, len(articles))
 	for i := 0; i < len(articles); i++ {
 		results[i].Articles = articles[i]
 		results[i].Pictures, _ = GetArticlePictures(articles[i].ID)
@@ -208,7 +204,7 @@ func UpdateArticleHandler(ctx *gin.Context) {
 	}
 	storedPictures, _ := GetArticlePictures(uint(articleID))
 
-	var providedArticle ArticlesPresenter
+	var providedArticle app.ArticlesPresenter
 	err = ctx.BindJSON(&providedArticle)
 	if err != nil {
 		ctx.String(http.StatusNotAcceptable, "You must provide an Articles in json format on the body")
@@ -230,13 +226,13 @@ func UpdateArticleHandler(ctx *gin.Context) {
 		return
 	}
 
-	var picturesSaved []Pictures
+	var picturesSaved []app.Pictures
 	var picturesIDToSave []uint
 	for i := 0; i < len(storedPictures); i++ {
 		pictureID := storedPictures[i].ID
 
 		// If the Pictures not exist an not linked to the Organisations we skip the Pictures
-		pic, err := GetOrganisationPicture(pictureID, uint(organisationID))
+		pic, err := app.GetOrganisationPicture(pictureID, uint(organisationID))
 		if err != nil {
 			continue
 		}
