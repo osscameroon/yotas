@@ -7,12 +7,12 @@ import (
 func OrderRouter() {
 	router := app.GetApiRouter()
 
-	router.GET("/shop", GetOrganisationOrdersHandler)
-	router.GET("/shop/wallet", GetWalletOrdersHandler)
-	router.GET("/shop/:orderID", GetOrderHandler)
-	router.POST("/shop", CreateOrderHandler)
-	router.POST("/shop/:orderID/process", ProcessOrderHandler)
-	router.POST("/shop/:orderID/pay", PayOrderHandler)
-	router.PUT("/shop/:orderID", UpdateOrderHandler)
-	router.DELETE("/shop/:orderID", DeleteOrderHandler)
+	router.GET("/orders", GetOrganisationOrdersHandler)
+	router.GET("/orders/wallet", GetWalletOrdersHandler)
+	router.GET("/orders/:orderID", GetOrderHandler)
+	router.POST("/orders", CreateOrderHandler)
+	router.POST("/orders/:orderID/process", ProcessOrderHandler)
+	router.POST("/orders/:orderID/pay", PayOrderHandler)
+	router.PUT("/orders/:orderID", UpdateOrderHandler)
+	router.DELETE("/orders/:orderID", DeleteOrderHandler)
 }
