@@ -1,0 +1,1 @@
+INSERT INTO public.organisations_users VALUES (1, 1, 1, true, NULL, NULL, NULL);

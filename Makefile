@@ -1,5 +1,7 @@
 .DEFAULT_GOAL := help
 
+.PHONY: build help clean lint test
+
 ## test: run tests over the entire code base
 test:
 	make test -C ./backend
