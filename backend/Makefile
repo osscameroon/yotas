@@ -87,8 +87,11 @@ stop-postgres:
 e2etest:
 	cd ./e2etests/ && npm test
 
+./e2etests/node_modules:
+	cd ./e2etests && npm install
+
 ## docker-e2etest: run e2etests in a docker compose
-docker-e2etest:
+docker-e2etest: ./e2etests/node_modules
 	docker-compose -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from e2etests
 
 ## vet: examines Go source code and reports suspicious constructs
