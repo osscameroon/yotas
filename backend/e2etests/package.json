@@ -14,5 +14,8 @@
     "mocha": "^9.1.1",
     "supertest": "^6.1.6"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^10.0.0"
+  }
 }

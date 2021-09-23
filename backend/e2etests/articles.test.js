@@ -1,13 +1,18 @@
 import { expect } from "chai";
 import request from "supertest";
 import axios from "axios";
+import dotenv from "dotenv";
+
+//Parse env
+dotenv.config()
+const apiHost = process.env.API_HOST
 
 describe("articles", function () {
   const baseEndpoint = "articles";
 
   describe("GET", function () {
     it("returns 200 status", async function () {
-      return request("http://localhost:9999/api")
+      return request(apiHost)
         .get(`/${baseEndpoint}`)
         .set("Tenant", "1")
         .expect(200)
@@ -15,7 +20,7 @@ describe("articles", function () {
     });
 
     it("returns 400 status when Tenant is not set", async function () {
-      return request("http://localhost:9999/api")
+      return request(apiHost)
         .get(`/${baseEndpoint}`)
         .expect(400);
     });
@@ -25,7 +30,7 @@ describe("articles", function () {
     const baseEndpoint = "articles";
 
     it("returns 200 status", async function () {
-      return request("http://localhost:9999/api")
+      return request(apiHost)
         .post(`/${baseEndpoint}`)
         .send({
           name: "Oss Stickers",
@@ -46,7 +51,7 @@ describe("articles", function () {
     });
 
     it("returns 400 status when Tenant is not set", async function () {
-      return request("http://localhost:9999/api")
+      return request(apiHost)
         .post(`/${baseEndpoint}`)
         .expect(400);
     });
@@ -58,7 +63,7 @@ describe("articles/{id}", () => {
 
   describe("GET", function () {
     it("returns 200 status", async function () {
-      return request("http://localhost:9999/api")
+      return request(apiHost)
         .get(`/${baseEndpoint}/1`)
         .set("Tenant", "1")
         .expect(200)
@@ -66,7 +71,7 @@ describe("articles/{id}", () => {
     });
 
     it("returns 400 status when Tenant is not set", async function () {
-      return request("http://localhost:9999/api")
+      return request(apiHost)
         .get(`/${baseEndpoint}/1`)
         .expect(400);
     });
@@ -74,7 +79,7 @@ describe("articles/{id}", () => {
     it("returns 404 status when the resource is not found", async function () {
       //Please unskip this test once support for this error status is done
       this.skip();
-      return request("http://localhost:9999/api")
+      return request(apiHost)
         .get(`/${baseEndpoint}/404`)
         .set("Tenant", "1")
         .expect(404);
@@ -100,7 +105,7 @@ describe("articles/{id}", () => {
       };
 
       return axios({
-        url: `http://localhost:9999/api/${baseEndpoint}`,
+        url: `${apiHost}/${baseEndpoint}`,
         method: "post",
         data: data,
         headers: { Tenant: "1" },
@@ -111,7 +116,7 @@ describe("articles/{id}", () => {
     });
 
     it("returns 200 status", async function () {
-      return request("http://localhost:9999/api")
+      return request(apiHost)
         .delete(`/${baseEndpoint}/${article_id}`)
         .set("Tenant", "1")
         .expect(200)
@@ -119,14 +124,14 @@ describe("articles/{id}", () => {
 
     it("returns 400 status when Tenant is not set", async function () {
       this.skip()
-      return request("http://localhost:9999/api")
+      return request(apiHost)
         .delete(`/${baseEndpoint}/${article_id}`)
         .expect(400);
     });
 
     it("returns 404 status when the resource is not found", async function () {
       this.skip()
-      return request("http://localhost:9999/api")
+      return request(apiHost)
         .delete(`/${baseEndpoint}/404`)
         .set("Tenant", "1")
         .expect(404);
@@ -153,7 +158,7 @@ describe("articles/{id}", () => {
       };
 
       return axios({
-        url: `http://localhost:9999/api/${baseEndpoint}`,
+        url: `${apiHost}/${baseEndpoint}`,
         method: "post",
         data: data,
         headers: { Tenant: "1" },
@@ -165,7 +170,7 @@ describe("articles/{id}", () => {
 
     after(function () {
       return axios({
-        url: `http://localhost:9999/api/${baseEndpoint}/${article_id}`,
+        url: `${apiHost}/${baseEndpoint}/${article_id}`,
         method: "delete",
         headers: { Tenant: "1" },
       }).then(function (res) {
@@ -188,7 +193,7 @@ describe("articles/{id}", () => {
         metadata: "string",
       };
 
-      return request("http://localhost:9999/api")
+      return request(apiHost)
         .put(`/${baseEndpoint}/${article_id}`)
         .send(newData)
         .set("Tenant", "1")
@@ -207,13 +212,13 @@ describe("articles/{id}", () => {
     });
 
     it("returns 400 status when Tenant is not set", async function () {
-      return request("http://localhost:9999/api")
+      return request(apiHost)
         .put(`/${baseEndpoint}/1`)
         .expect(400);
     });
 
     it("returns 404 status when the resource is not found", async function () {
-      return request("http://localhost:9999/api")
+      return request(apiHost)
         .put(`/${baseEndpoint}/404`)
         .set("Tenant", "1")
         .expect(404);

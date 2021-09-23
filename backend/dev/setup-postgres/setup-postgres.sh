@@ -6,7 +6,6 @@ set -u
 
 ENV_FILE=/start-postgres/dev/setup-postgres/env
 
-
 #install goose
 if [[ -z "$(which goose)" ]]; then
 	go install github.com/pressly/goose/v3/cmd/goose@latest
@@ -19,7 +18,6 @@ if [[ -z "$(which psql)" ]]; then
 	apt-get update
 	apt-get -y install postgresql
 fi
-
 
 cd /start-postgres/scripts
 ./goose_up.sh $ENV_FILE

@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: yotas
+      POSTGRES_PASSWORD: yotas
+      POSTGRES_USER: yotas
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+
+  api:
+    depends_on:
+      - postgres
+    restart: always
+    image: golang:stretch
+    command: /start-postgres/dev/scripts/wait-for-it/wait-for-it.sh postgres:5432 -t 120 -- /start-postgres/dev/setup-postgres/setup-postgres-and-run-api.sh
+    env_file:
+      - ./dev/setup-postgres/env
+    volumes:
+      - .:/start-postgres
+    ports:
+      - 9999:9999
+
+  e2etests:
+    depends_on:
+      - api
+    image: node:14-stretch
+    command: /start-postgres/dev/scripts/wait-for-it/wait-for-it.sh api:9999 -t 300 -- make -C /start-postgres e2etest
+    env_file:
+      - ./dev/setup-postgres/env
+    environment:
+      API_HOST: "http://api:9999/api"
+    volumes:
+      - .:/start-postgres
