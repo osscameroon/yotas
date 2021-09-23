@@ -1,5 +1,7 @@
 .PHONY: build help clean lint test start-postgres goose_up goose_down fmt build-docker
 .PHONY: stop-postgres clean-postgres populate-postgres reset-postgres stop-api start-api connect-api e2etest
+.PHONY: docker-e2etest
+
 .DEFAULT_GOAL := help
 
 BINARYNAME=yotas
@@ -84,6 +86,10 @@ stop-postgres:
 ## e2etest: run end to end tests against local api
 e2etest:
 	cd ./e2etests/ && npm test
+
+## docker-e2etest: run e2etests in a docker compose
+docker-e2etest:
+	docker-compose -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from e2etests
 
 ## vet: examines Go source code and reports suspicious constructs
 vet:
