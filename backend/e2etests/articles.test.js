@@ -106,7 +106,6 @@ describe("articles/{id}", () => {
         headers: { Tenant: "1" },
       }).then(function (res) {
         article_id = res.data.id;
-        console.log("ARticle_ID: ", article_id) // Debug
         return res;
       });
     });
