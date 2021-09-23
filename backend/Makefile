@@ -1,5 +1,5 @@
 .PHONY: build help clean lint test start-postgres goose_up goose_down fmt build-docker
-.PHONY: stop-postgres clean-postgres stop-api start-api connect-api
+.PHONY: stop-postgres clean-postgres populate-postgres reset-postgres stop-api start-api connect-api
 .DEFAULT_GOAL := help
 
 BINARYNAME=yotas
@@ -64,6 +64,17 @@ ifeq (, $(shell which goose))
 	$(call install_goose)
 endif
 	cd ./scripts/ && ./drop_yotas_tables.sh
+
+## populate-postgres: populate the database with new data
+populate-postgres:
+ifeq (, $(shell which goose))
+	$(call install_goose)
+endif
+	cd ./scripts/ && ./populate_db.sh
+
+## reset-postgres: clean and populate the data base
+reset-postgres:
+	make clean-postgres && make populate-postgres
 
 ## stop-postgres: remove local postgres-data and teardown postgres
 stop-postgres:
