@@ -1,5 +1,7 @@
 .PHONY: build help clean lint test start-postgres goose_up goose_down fmt build-docker
-.PHONY: stop-postgres clean-postgres stop-api start-api connect-api
+.PHONY: stop-postgres clean-postgres populate-postgres reset-postgres stop-api start-api connect-api e2etest
+.PHONY: docker-e2etest
+
 .DEFAULT_GOAL := help
 
 BINARYNAME=yotas
@@ -65,10 +67,32 @@ ifeq (, $(shell which goose))
 endif
 	cd ./scripts/ && ./drop_yotas_tables.sh
 
+## populate-postgres: populate the database with new data
+populate-postgres:
+ifeq (, $(shell which goose))
+	$(call install_goose)
+endif
+	cd ./scripts/ && ./populate_db.sh
+
+## reset-postgres: clean and populate the data base
+reset-postgres:
+	make clean-postgres && make populate-postgres
+
 ## stop-postgres: remove local postgres-data and teardown postgres
 stop-postgres:
 	docker-compose down && \
 	rm -rf postgres-data
+
+## e2etest: run end to end tests against local api
+e2etest:
+	cd ./e2etests/ && npm test
+
+./e2etests/node_modules:
+	cd ./e2etests && npm install
+
+## docker-e2etest: run e2etests in a docker compose
+docker-e2etest: ./e2etests/node_modules
+	docker-compose -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from e2etests
 
 ## vet: examines Go source code and reports suspicious constructs
 vet:
