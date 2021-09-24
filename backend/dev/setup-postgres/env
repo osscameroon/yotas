@@ -1,0 +1,10 @@
+# API related configurations
+BASE_URI=api/
+PORT=9999
+
+# DATABASE related configurations
+PG_HOST=postgres
+PG_DBNAME=yotas
+PG_USER=yotas
+PG_PASSWORD=yotas
+PG_PORT=5432

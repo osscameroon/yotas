@@ -22,3 +22,6 @@ yotas
 
 #node
 node_modules
+
+#postgre
+postgres-data

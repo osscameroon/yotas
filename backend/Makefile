@@ -1,11 +1,15 @@
--include .env
-BINARYNAME=yotas
+.PHONY: build help clean lint test start-postgres goose_up goose_down fmt build-docker
+.PHONY: stop-postgres clean-postgres populate-postgres reset-postgres stop-api start-api connect-api e2etest
+.PHONY: docker-e2etest
+
 .DEFAULT_GOAL := help
-PG_STRING = 'host=${PG_HOST} dbname=${PG_DBNAME} user=${PG_USER} password=${PG_PASSWORD} sslmode=disable'
 
-# Database variables
+BINARYNAME=yotas
 
-# commands
+define install_goose
+	go get -u github.com/pressly/goose/v3/cmd/goose
+endef
+
 ## application
 run:
 	go run main.go
@@ -24,21 +28,71 @@ build-docker: test
 
 ## migrations
 install_goose:
-	go get -u github.com/pressly/goose/v3/cmd/goose
+	$(call install_goose)
 
 goose_up:
-	cd migrations && goose postgres $(PG_STRING) up
+ifeq (, $(shell which goose))
+	$(call install_goose)
+endif
+	cd ./scripts/ && ./goose_up.sh
 
 goose_down:
-	cd migrations && goose postgres $(PG_STRING) down
+ifeq (, $(shell which goose))
+	$(call install_goose)
+endif
+	cd ./scripts/ && ./goose_down.sh
 
-## start-postgres:
+## start-api: starts the api and its dependencies in a docker container
+start-api:
+	docker-compose up
+
+## stop-api: stops the api and its dependencies in a docker container
+stop-api:
+	docker-compose down && \
+	rm -rf postgres-data
+
+## start-postgres: starts postgres sql, setup and populate yotas database
 start-postgres:
-	docker-compose up postgres
+	docker-compose up start-postgres
+	docker-compose logs -f
 
-## stop-postgres:
+## connect-postgres: connect to postgres sql
+connect-postgres:
+	cd ./scripts/ && ./connect_to_postgres.sh
+
+## clean-postgres: delete every tables stored in the yotas database
+clean-postgres:
+ifeq (, $(shell which goose))
+	$(call install_goose)
+endif
+	cd ./scripts/ && ./drop_yotas_tables.sh
+
+## populate-postgres: populate the database with new data
+populate-postgres:
+ifeq (, $(shell which goose))
+	$(call install_goose)
+endif
+	cd ./scripts/ && ./populate_db.sh
+
+## reset-postgres: clean and populate the data base
+reset-postgres:
+	make clean-postgres && make populate-postgres
+
+## stop-postgres: remove local postgres-data and teardown postgres
 stop-postgres:
-	docker-compose down
+	docker-compose down && \
+	rm -rf postgres-data
+
+## e2etest: run end to end tests against local api
+e2etest:
+	cd ./e2etests/ && npm test
+
+./e2etests/node_modules:
+	cd ./e2etests && npm install
+
+## docker-e2etest: run e2etests in a docker compose
+docker-e2etest: ./e2etests/node_modules
+	docker-compose -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from e2etests
 
 ## vet: examines Go source code and reports suspicious constructs
 vet:
