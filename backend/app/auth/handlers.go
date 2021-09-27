@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
+	"github.com/osscameroon/yotas/app"
 	"io"
 	"log"
 	"net/http"
@@ -40,7 +41,7 @@ func getUserByIdHandler(c *gin.Context) {
 	user.GithubId = ""
 	user.GithubToken = ""
 
-	result := UsersPresenter{Users: *user}
+	result := app.UsersPresenter{Users: *user}
 
 	c.JSON(http.StatusOK, result)
 }
@@ -48,7 +49,7 @@ func getUserByIdHandler(c *gin.Context) {
 // githubCallbackHandler
 func githubCallbackHandler(oauthConf oauth2.Config) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-		var call Callback
+		var call app.Callback
 		err := c.BindJSON(&call)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
