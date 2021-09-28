@@ -1024,6 +1024,11 @@ components:
         article_id:
           type: string
           example: 4
+        article_price:
+          type: number
+          readOnly: true
+          description: Price at the momment of the order
+          example: 13
         article:
           type: object
           readOnly: true
