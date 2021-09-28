@@ -993,11 +993,14 @@ components:
           readOnly: true
         amount:
           type: number
+        description:
+          type: string
         operation_type:
           type: string
           enum:
             - debit
             - credit
+            - refund
         approved:
           type: boolean
         operation_hash:
