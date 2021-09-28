@@ -485,7 +485,7 @@ paths:
         - $ref: "#/components/parameters/Tenant"
         - $ref: "#/components/parameters/PageLimit"
         - $ref: "#/components/parameters/PageOffset"
-        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/State"
       responses:
         "200":
           description: Orders fetched successfully
@@ -501,7 +501,6 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
                       $ref: "#/components/schemas/Orders"
         "400":
           $ref: "#/components/responses/400TenantError"
@@ -1230,6 +1229,12 @@ components:
       description: Specifies the keyword to look for in displayed items
       schema:
         type: integer
+    State:
+      name: state
+      in: query
+      description: Specifies the orders state
+      schema:
+        type: string
     Tenant:
       name: Tenant
       required: true
