@@ -1073,6 +1073,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/OrderItems'
+        total_amount:
+          type: number
+          readOnly: true
+          example: 145
         state:
           type: string
           readOnly: true
