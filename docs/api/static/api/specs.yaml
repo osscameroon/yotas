@@ -1079,6 +1079,7 @@ components:
           example: 145
         state:
           type: string
+          description: 'The state of the order can be: not paid, to review, accepted, declined.'
           readOnly: true
           example: 'not paid'
         decision:
