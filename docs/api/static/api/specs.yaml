@@ -507,6 +507,38 @@ paths:
         "401":
           $ref: "#/components/responses/401Error"
 
+  /orders/wallet:
+    get:
+      description: List orders of a wallet
+      tags:
+        - Orders
+      parameters:
+        - $ref: "#/components/parameters/Wallet"
+        - $ref: "#/components/parameters/Tenant"
+        - $ref: "#/components/parameters/PageLimit"
+        - $ref: "#/components/parameters/PageOffset"
+        - $ref: "#/components/parameters/State"
+      responses:
+        "200":
+          description: Orders fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  limit:
+                    type: number
+                  offset:
+                    type: number
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Orders"
+        "400":
+          $ref: "#/components/responses/400TenantError"
+        "401":
+          $ref: "#/components/responses/401Error"
+
   /orders/{orderId}:
     get:
       description: Retrieve an Order
@@ -1240,6 +1272,13 @@ components:
       required: true
       in: header
       description: Id of the organisation for which the request is addressed
+      schema:
+        type: string
+    Wallet:
+      name: wallet
+      required: true
+      in: query
+      description: Wallet of an organisation user
       schema:
         type: string
     User:
