@@ -1081,6 +1081,10 @@ components:
           type: string
           readOnly: true
           example: 'not paid'
+        decision:
+          type: string
+          description: 'The reason why the order are accepted or declined'
+          readOnly: true
         created_at:
           type: string
           readOnly: true
