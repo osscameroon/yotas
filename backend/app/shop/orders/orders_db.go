@@ -38,7 +38,7 @@ func CreateOrder(order *app.Orders, orderItems []*app.OrderItemPresenter) error 
 			orderArticle.CreatedAt = time.Now().UTC()
 			err = tx.Create(orderArticle.OrdersArticles).Error
 			if err != nil {
-				return fmt.Errorf("can't create shop process fail when creating order item %s", orderArticle.Article.Name)
+				return fmt.Errorf("can't create order process fail when creating order item %s", orderArticle.Article.Name)
 			}
 		}
 
@@ -67,7 +67,7 @@ func GetOrder(orderID uint) (*app.Orders, error) {
 func GetWalletOrders(walletID string, orderStateFilter OrderState, limit int, offset int) ([]app.Orders, error) {
 	var results []app.Orders
 	req := app.Session.Model(&app.Orders{}).
-		Joins("JOIN wallets on wallets.wallet_id = shop.wallet_id and shop.wallet_id = ?", walletID)
+		Joins("JOIN wallets on wallets.wallet_id = orders.wallet_id and orders.wallet_id = ?", walletID)
 
 	if string(orderStateFilter) != "" {
 		req = req.Where("state = ?", string(orderStateFilter))
@@ -81,7 +81,7 @@ func GetWalletOrders(walletID string, orderStateFilter OrderState, limit int, of
 func GetOrganisationOrders(organisationID uint, orderStateFilter OrderState, limit int, offset int) ([]app.Orders, error) {
 	var results []app.Orders
 	req := app.Session.Model(&app.Orders{}).
-		Joins("JOIN wallets on wallets.wallet_id = shop.wallet_id and wallets.organisation_id = ?", organisationID)
+		Joins("JOIN wallets on wallets.wallet_id = orders.wallet_id and wallets.organisation_id = ?", organisationID)
 
 	if string(orderStateFilter) != "" {
 		req = req.Where("state = ?", string(orderStateFilter))
@@ -254,14 +254,14 @@ func UpdateOrder(orderID uint, orderItems []*app.OrderItemPresenter) (*app.Order
 			orderItem.OrdersArticles.UpdatedAt = time.Now().UTC()
 			err = tx.Create(orderItem.OrdersArticles).Error
 			if err != nil {
-				return fmt.Errorf("can't create shop process fail when creating order item %s", orderItem.Article.Name)
+				return fmt.Errorf("can't create order process fail when creating order item %s", orderItem.Article.Name)
 			}
 
 			totalOrderAmount += int64(orderItem.Quantity) * orderItem.ArticlePrice
 			finalOrderItemsID = append(finalOrderItemsID, orderItem.ID)
 		}
 
-		// we delete unused previous store shop articles
+		// we delete unused previous store order articles
 		err = tx.Model(&app.OrdersArticles{}).Where("order_id = ? AND id NOT IN ?", order.ID, finalOrderItemsID).Delete(&app.OrdersArticles{}).Error
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			return err
