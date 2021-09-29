@@ -485,7 +485,7 @@ paths:
         - $ref: "#/components/parameters/Tenant"
         - $ref: "#/components/parameters/PageLimit"
         - $ref: "#/components/parameters/PageOffset"
-        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/State"
       responses:
         "200":
           description: Orders fetched successfully
@@ -501,7 +501,38 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
+                      $ref: "#/components/schemas/Orders"
+        "400":
+          $ref: "#/components/responses/400TenantError"
+        "401":
+          $ref: "#/components/responses/401Error"
+
+  /orders/wallet:
+    get:
+      description: List orders of a wallet
+      tags:
+        - Orders
+      parameters:
+        - $ref: "#/components/parameters/Wallet"
+        - $ref: "#/components/parameters/Tenant"
+        - $ref: "#/components/parameters/PageLimit"
+        - $ref: "#/components/parameters/PageOffset"
+        - $ref: "#/components/parameters/State"
+      responses:
+        "200":
+          description: Orders fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  limit:
+                    type: number
+                  offset:
+                    type: number
+                  data:
+                    type: array
+                    items:
                       $ref: "#/components/schemas/Orders"
         "400":
           $ref: "#/components/responses/400TenantError"
@@ -993,11 +1024,14 @@ components:
           readOnly: true
         amount:
           type: number
+        description:
+          type: string
         operation_type:
           type: string
           enum:
             - debit
             - credit
+            - refund
         approved:
           type: boolean
         operation_hash:
@@ -1024,6 +1058,11 @@ components:
         article_id:
           type: string
           example: 4
+        article_price:
+          type: number
+          readOnly: true
+          description: Price at the momment of the order
+          example: 13
         article:
           type: object
           readOnly: true
@@ -1068,6 +1107,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/OrderItems'
+        total_amount:
+          type: number
+          readOnly: true
+          example: 145
+        state:
+          type: string
+          enum:
+            - not paid
+            - to review
+            - accepted
+            - declined
+          readOnly: true
+          example: 'not paid'
+        decision:
+          type: string
+          description: 'The reason why the order are accepted or declined'
+          readOnly: true
         created_at:
           type: string
           readOnly: true
@@ -1205,11 +1261,24 @@ components:
       description: Specifies the keyword to look for in displayed items
       schema:
         type: integer
+    State:
+      name: state
+      in: query
+      description: Specifies the orders state
+      schema:
+        type: string
     Tenant:
       name: Tenant
       required: true
       in: header
       description: Id of the organisation for which the request is addressed
+      schema:
+        type: string
+    Wallet:
+      name: wallet
+      required: true
+      in: query
+      description: Wallet of an organisation user
       schema:
         type: string
     User:
