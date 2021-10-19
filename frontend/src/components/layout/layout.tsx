@@ -1,4 +1,6 @@
 import * as React from "react";
+import { Container } from "@chakra-ui/react";
+
 import Footer from "./footer";
 import Header from "./header";
 
@@ -11,7 +13,9 @@ const Layout = ({ children }: LayoutProps) => {
     <>
       <Header />
 
-      <main>{children}</main>
+      <Container maxW="container.xl">
+        <main>{children}</main>
+      </Container>
 
       <Footer />
     </>
