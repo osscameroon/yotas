@@ -16,7 +16,7 @@ services:
   start-postgres:
     depends_on:
       - postgres
-    image: golang:stretch
+    image: golang:buster
     command: ["/start-postgres/dev/scripts/wait-for-it/wait-for-it.sh", "postgres:5432", "--", "/start-postgres/dev/setup-postgres/setup-postgres.sh"]
     volumes:
       - .:/start-postgres
@@ -24,7 +24,7 @@ services:
   api:
     depends_on:
       - start-postgres
-    image: golang:stretch
+    image: golang:buster
     command: ["/bin/bash", "-c", "cd /api/ && make run"]
     env_file:
       - ./dev/setup-postgres/env

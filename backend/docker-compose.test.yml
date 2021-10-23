@@ -16,7 +16,7 @@ services:
     depends_on:
       - postgres
     restart: always
-    image: golang:stretch
+    image: golang:buster
     command: /start-postgres/dev/scripts/wait-for-it/wait-for-it.sh postgres:5432 -t 120 -- /start-postgres/dev/setup-postgres/setup-postgres-and-run-api.sh
     env_file:
       - ./dev/setup-postgres/env
