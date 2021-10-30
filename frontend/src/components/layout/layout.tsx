@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Container } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 
 import Footer from "./footer";
 import Header from "./header";
@@ -12,11 +12,8 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <>
       <Header />
-
-      <Container maxW="container.xl">
-        <main>{children}</main>
-      </Container>
-
+      <Box marginY={5} />
+      <main>{children}</main>
       <Footer />
     </>
   );

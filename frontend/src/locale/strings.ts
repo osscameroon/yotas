@@ -1,20 +1,11 @@
-const homePageStrings = {
-  bannerMessage: {
-    en: "Contribute and get rewarded",
-    fr: "Contribuez et soyez récompensé",
-  },
-  joinButtonText: {
-    en: "Join an Organisation",
-    fr: "Rejoindre une organisation",
-  },
-};
+import { frStrings } from "./fr";
+import { enStrings } from "./en";
 
-const STRINGS: any = {
-  ...homePageStrings,
-  home: {
-    en: "Home",
-    fr: "Accueil",
-  },
+export type TranslateKeys = keyof typeof enStrings;
+
+const STRINGS = {
+  fr: frStrings,
+  en: enStrings,
 };
 
 export default STRINGS;
