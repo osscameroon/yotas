@@ -41,7 +41,7 @@ const Header = () => {
           <Link href="#">{t("documentation")}</Link>
           <Link href="#">{t("organisations")}</Link>
         </Flex>
-        <Flex alignItems="center" flexDirection="row" justifyContent="end">
+        <Flex alignItems="center" flexDirection="row" justifyContent="flex-end">
           <Button colorScheme="primary" rightIcon={<AiFillGithub />}>
             Sign Up
           </Button>

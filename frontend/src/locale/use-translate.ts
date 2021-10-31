@@ -1,6 +1,14 @@
 import { useContext } from "react";
 import { LangType, LocaleContext } from "./local-provider";
-import STRINGS, { TranslateKeys } from "./strings";
+import { frStrings } from "./fr";
+import { enStrings } from "./en";
+
+export type TranslateKeys = keyof typeof enStrings;
+
+const STRINGS = {
+  fr: frStrings,
+  en: enStrings,
+};
 
 function translate(lang: LangType, keyword: TranslateKeys): string {
   return STRINGS[lang][keyword];

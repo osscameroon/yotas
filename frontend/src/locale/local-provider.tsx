@@ -17,12 +17,20 @@ export const LocaleContext = React.createContext(DefaultLang);
 
 const LocaleProvider = ({ children }: { children: JSX.Element }) => {
   const [navigatorLang] = window.navigator.language.split("-");
+  const langKey = "defaultLanguage";
+  const savedLang = localStorage.getItem(langKey);
 
-  const [lang, setLang] = useState(
-    (langs.includes(navigatorLang) ? navigatorLang : "en") as LangType
-  );
+  const languageToUse = (): LangType => {
+    if (savedLang) return savedLang as LangType;
+    if (langs.includes(navigatorLang)) return navigatorLang as LangType;
+
+    return "en";
+  };
+
+  const [lang, setLang] = useState(languageToUse());
 
   const changeLang = (newLang: LangType) => {
+    localStorage.setItem(langKey, newLang);
     setLang(newLang);
   };
 

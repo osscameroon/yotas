@@ -8,6 +8,7 @@ import {
   Image,
   Link,
 } from "@chakra-ui/react";
+import useTranslate from "../../locale/use-translate";
 
 type OrganisationCardProps = {
   name: string;
@@ -26,6 +27,8 @@ const OrganisationCard = ({
   membersCount,
   name,
 }: OrganisationCardProps) => {
+  const { t } = useTranslate();
+
   return (
     <Box boxShadow="lg" height="420px" margin="20px" rounded="lg">
       <Box borderRadius="2xl" height="150px">
@@ -56,9 +59,11 @@ const OrganisationCard = ({
           <Text>{description}</Text>
         </Box>
         <Flex alignItems="center" justifyContent="space-between">
-          <Text>{membersCount} Members</Text>
+          <Text>
+            {membersCount} {t("members")}
+          </Text>
           <Link href={`#${id}`}>
-            <Button colorScheme="primary"> Join </Button>
+            <Button colorScheme="primary">{t("join")}</Button>
           </Link>
         </Flex>
       </Flex>
