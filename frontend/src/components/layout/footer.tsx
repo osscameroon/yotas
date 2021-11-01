@@ -17,7 +17,7 @@ const Footer = () => {
   return (
     <Box bg="primary.500" color="white" py="3em">
       <Container maxW="container.xl">
-        <SimpleGrid columns={4} spacing={10}>
+        <SimpleGrid columns={{ sm: 2, md: 4 }} spacing={10}>
           <Flex alignItems="center" flexDirection="column">
             <List spacing={3}>
               <ListItem>

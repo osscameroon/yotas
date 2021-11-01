@@ -8,6 +8,7 @@ import {
   Text,
   Button,
   Flex,
+  useMediaQuery,
 } from "@chakra-ui/react";
 
 import Banner from "./banner";
@@ -20,9 +21,11 @@ import docIllustration from "../../assets/images/docs.png";
 import logoBackground from "../../assets/images/logo-background.png";
 import ARTICLES from "../../fixtures/home-articles";
 import ArticleCard from "../../components/common/article-card";
+import { smallDevice } from "../../themes";
 
 const Home = () => {
   const { t } = useTranslate();
+  const [isSmallDevice] = useMediaQuery(smallDevice);
 
   document.title = t("homePage");
 
@@ -42,8 +45,12 @@ const Home = () => {
           bgRepeat="no-repeat"
         >
           <Container maxW="container.xl" py="3em">
-            <SimpleGrid columns={2}>
-              <Box alignItems="center" display="flex" justifyContent="center">
+            <SimpleGrid columns={{ sm: 1, md: 2 }}>
+              <Box
+                alignItems="center"
+                display={isSmallDevice ? "none" : "flex"}
+                justifyContent="center"
+              >
                 <Image boxSize="470px" src={docIllustration} />
               </Box>
               <Box
@@ -72,7 +79,7 @@ const Home = () => {
           >
             <Heading>{t("shopArticle")}</Heading>
             <Box mt="3em" />
-            <SimpleGrid columns={3} spacing={10}>
+            <SimpleGrid columns={{ sm: 1, md: 3 }} spacing={10}>
               {ARTICLES.map((article, i) => (
                 <ArticleCard {...article} key={i} />
               ))}
@@ -84,7 +91,7 @@ const Home = () => {
         <Box my={2} />
         <Box bgColor="lighterGrey" py="3em">
           <Container maxW="container.xl">
-            <SimpleGrid columns={2}>
+            <SimpleGrid columns={{ sm: 1, md: 2 }} spacing={5}>
               <Flex
                 alignItems="flex-start"
                 direction="column"

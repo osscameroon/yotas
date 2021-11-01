@@ -7,12 +7,14 @@ import {
   Container,
   Icon,
   SimpleGrid,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import { YotasIllustration } from "../../assets/components/yotas-illustration";
 import { BsDoorOpen, BsAlignStart, BsShopWindow } from "react-icons/bs";
 import { FaCoins } from "react-icons/fa";
 import { IconType } from "react-icons";
 import useTranslate from "../../locale/use-translate";
+import { smallDevice } from "../../themes";
 
 type IconTextProps = {
   icon: IconType;
@@ -30,6 +32,9 @@ const IconText = ({ boxSize, color, icon, text }: IconTextProps) => (
 
 const Presentation = () => {
   const { t } = useTranslate();
+  const [isSmallDevice] = useMediaQuery(smallDevice);
+
+  const textMargin = isSmallDevice ? 0 : 20;
 
   const iconStyle = {
     boxSize: "45px",
@@ -43,20 +48,29 @@ const Presentation = () => {
           <Heading as="h1" textAlign="center">
             {t("howDoesWork")}
           </Heading>
-          <Box my="2em" />
-          <SimpleGrid columns={2} spacing={20}>
+          <Box my={isSmallDevice ? "1em" : "2em"} />
+          <SimpleGrid
+            columns={{ sm: 1, md: 2 }}
+            spacing={isSmallDevice ? 5 : 20}
+          >
             <Box>
-              <Text ml={10}>
+              <Text ml={textMargin}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                 Bibendum orci tellus phasellus donec eu aliquet aliquam ipsum
                 feugiat eget orci.Lorem ipsum dolor sit amet, consectetur
                 adipiscing elit. Bibendum orci tellus phasellus donec eu aliquet
                 aliquam ipsum feugiat eget orci.
               </Text>
-              <Box my="4" />
+              <Box my={isSmallDevice ? "1em" : "2em"} />
               <YotasIllustration />
             </Box>
-            <Flex flexDirection="column" justifyContent="space-around">
+            <Flex
+              alignItems="flex-start"
+              flexDirection="column"
+              height={isSmallDevice ? "250px" : "auto"}
+              justifyContent="space-around"
+              ml={isSmallDevice ? "3em" : "0em"}
+            >
               <IconText
                 icon={BsDoorOpen}
                 {...iconStyle}
