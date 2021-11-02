@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/contrib/cors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -14,6 +15,13 @@ var jwtSigningKey = []byte("osscameroonisamazing")
 
 func InitRouter() {
 	router = gin.Default()
+	router.Use(cors.New(cors.Config{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+		ExposedHeaders:   []string{},
+		AllowCredentials: true,
+	}))
 	apiRouter = router.Group(Env.BaseUri)
 }
 
