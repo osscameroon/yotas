@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/gin-gonic/contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -9,6 +10,13 @@ var apiRouter *gin.RouterGroup
 
 func InitRouter() {
 	router = gin.Default()
+	router.Use(cors.New(cors.Config{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+		ExposedHeaders:   []string{},
+		AllowCredentials: true,
+	}))
 	apiRouter = router.Group(Env.BaseUri)
 }
 
