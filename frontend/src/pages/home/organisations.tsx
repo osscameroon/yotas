@@ -34,7 +34,7 @@ const Organisations = () => {
           </InputGroup>
         </Box>
         <Box m="2em" />
-        <SimpleGrid columns={3} space={20}>
+        <SimpleGrid columns={{ sm: 1, md: 3 }} space={20}>
           {ORGANISATIONS.map((org, i) => (
             <OrganisationCard key={i} {...org} />
           ))}

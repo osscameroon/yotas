@@ -7,8 +7,10 @@ import {
   Flex,
   Image,
   Link,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import useTranslate from "../../locale/use-translate";
+import { smallDevice } from "../../themes";
 
 type OrganisationCardProps = {
   name: string;
@@ -28,10 +30,16 @@ const OrganisationCard = ({
   name,
 }: OrganisationCardProps) => {
   const { t } = useTranslate();
+  const [isSmallDevice] = useMediaQuery(smallDevice);
 
   return (
-    <Box boxShadow="lg" height="420px" margin="20px" rounded="lg">
-      <Box borderRadius="2xl" height="150px">
+    <Box
+      boxShadow="lg"
+      height={isSmallDevice ? "400" : "420px"}
+      margin="20px"
+      rounded="lg"
+    >
+      <Box height="150px">
         <Box m={3} position="absolute">
           <Image alt={`logo-${name}`} boxSize="5em" src={logo} />
         </Box>
@@ -48,14 +56,14 @@ const OrganisationCard = ({
         flexDirection="column"
         height="250px"
         justifyContent="space-around"
-        mt="2em"
+        mt={isSmallDevice ? "0em" : "2em"}
         padding="15px"
       >
         <Box>
           <Heading fontSize="xl" fontWeight="bold">
             {name}
           </Heading>
-          <Box mt="3" />
+          <Box mt="1em" />
           <Text>{description}</Text>
         </Box>
         <Flex alignItems="center" justifyContent="space-between">
