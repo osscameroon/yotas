@@ -16,7 +16,7 @@ var jwtSigningKey = []byte("osscameroonisamazing")
 func InitRouter() {
 	router = gin.Default()
 	router.Use(cors.New(cors.Config{
-		AllowedOrigins:   []string{"*"},
+		AllowAllOrigins:  true,
 		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
 		ExposedHeaders:   []string{},
