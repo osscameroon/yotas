@@ -7,13 +7,13 @@ import (
 )
 
 // CreateUser create a user from it's github user object and its token
-func CreateUser(user github.User, token string) error {
+func CreateUser(user github.User, githubToken string) error {
 	return app.Session.Create(&app.Users{
 		Model:       app.Model{CreatedAt: time.Now().UTC()},
 		Name:        *user.Name,
 		Email:       *user.Email,
 		GithubId:    *user.NodeID,
-		GithubToken: token,
+		GithubToken: githubToken,
 		AvatarUrl:   *user.AvatarURL,
 	}).Error
 }
@@ -29,8 +29,8 @@ func GetUserByID(userID uint) (*app.Users, error) {
 	return &user, nil
 }
 
-//GetUserByToken Retrieve a user from it's githubID
-func GetUserByToken(token string) (*app.Users, error) {
+//GetUserByGithubToken Retrieve a user from it's githubID
+func GetUserByGithubToken(token string) (*app.Users, error) {
 	var user app.Users
 	result := app.Session.Where("github_token = ?", token).First(&user)
 	if result.Error != nil {

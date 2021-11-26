@@ -8,8 +8,8 @@ func ArticleRouter() {
 	router := app.GetApiRouter()
 
 	router.GET("/articles", GetOrganisationArticlesHandler)
-	router.POST("/articles", CreateArticleHandler)
+	router.POST("/articles", app.IsAuthorized(CreateArticleHandler))
 	router.GET("/articles/:articleID", GetArticleHandler)
-	router.PUT("/articles/:articleID", UpdateArticleHandler)
-	router.DELETE("/articles/:articleID", DeleteArticleHandler)
+	router.PUT("/articles/:articleID", app.IsAuthorized(UpdateArticleHandler))
+	router.DELETE("/articles/:articleID", app.IsAuthorized(DeleteArticleHandler))
 }
