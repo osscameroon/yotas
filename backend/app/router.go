@@ -38,7 +38,6 @@ func GenerateJWT(customKey string) (string, error) {
 	tokenString, err := token.SignedString(jwtSigningKey)
 
 	if err != nil {
-		fmt.Errorf("Something Went Wrong: %s", err.Error())
 		return "", err
 	}
 

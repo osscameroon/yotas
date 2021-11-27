@@ -8,7 +8,7 @@ func OrganisationRouter() {
 	router := app.GetApiRouter()
 
 	router.GET("/organisations", OrganisationsAllHandler)
-	router.POST("/organisations",  app.IsAuthorized(CreateOrganisationHandler))
+	router.POST("/organisations", app.IsAuthorized(CreateOrganisationHandler))
 	router.GET("/organisations/:organisationID", OrganisationsHandler)
 	// router.PATCH("/organisations/:organisationID", UpdateOrganisationsHandler)
 }
