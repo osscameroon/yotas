@@ -47,22 +47,18 @@ func GenerateJWT(customKey string) (string, error) {
 // IsAuthorized This function will check the authorization from a given token in Bearer
 func IsAuthorized(endpoint func(c *gin.Context)) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
-
 		if c.GetHeader("Authorization") != "" {
-
 			token, err := jwt.Parse(c.GetHeader("Authorization"), func(token *jwt.Token) (interface{}, error) {
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 					return nil, fmt.Errorf("There was an error")
 				}
 				return jwtSigningKey, nil
 			})
-
 			if err != nil {
 				c.JSON(http.StatusUnauthorized, gin.H{
 					"reason": err.Error(),
 				})
 			}
-
 			if token.Valid {
 				endpoint(c)
 			}
