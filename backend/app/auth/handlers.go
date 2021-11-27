@@ -127,17 +127,17 @@ func getUserFromGithubToken(c *gin.Context, githubToken string, oauthConf oauth2
 			// we don't get from cache
 			githubUser, err := githubOauthClient(c, githubToken, oauthConf, false)
 			if err != nil {
-				c.JSON(http.StatusNotFound, gin.H{ "reason": err.Error()})
+				c.JSON(http.StatusNotFound, gin.H{"reason": err.Error()})
 			} else {
 				err := CreateUser(*githubUser, githubToken)
 				if err != nil {
-					c.JSON(http.StatusInternalServerError, gin.H{ "reason": err.Error()})
+					c.JSON(http.StatusInternalServerError, gin.H{"reason": err.Error()})
 				}
 			}
 		} else {
 			err := CreateUser(*githubUser, githubToken)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{ "reason": err.Error()})
+				c.JSON(http.StatusInternalServerError, gin.H{"reason": err.Error()})
 			}
 		}
 	}
