@@ -440,6 +440,30 @@ paths:
         "404":
           $ref: "#/components/responses/404Error"
 
+  /articles/random:
+    description: Random articles
+    get:
+      description: list 3 articles randomly from an random selected organisation
+      tags:
+        - Articles 
+      responses:
+        "200":
+          description: Successfull response
+          content:
+            application/json:
+              schema: 
+                type: "object"
+                properties:
+                  organisation: 
+                    type: "object"
+                    $ref: "#/components/schemas/Organisations"
+                  articles: 
+                    type: "array"
+                    items:
+                      type: "object"
+                      $ref: "#/components/schemas/Articles"
+
+
   /organisations/{organisationId}:
     get:
       tags:
