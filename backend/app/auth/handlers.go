@@ -79,7 +79,7 @@ func githubCallbackHandler(oauthConf oauth2.Config) gin.HandlerFunc {
 		}
 
 		// We return the user
-		getUserFromToken(c, token.AccessToken, oauthConf)
+		getUserFromGithubToken(c, token.AccessToken, oauthConf)
 	}
 
 	return gin.HandlerFunc(fn)
@@ -115,39 +115,39 @@ func githubOauthClient(c *gin.Context, token string, oauthConf oauth2.Config, fr
 	return user, err
 }
 
-func createUserHandler(user *github.User, token string) {
-	var err = CreateUser(*user, token)
-	if err != nil {
-		log.Println(err.Error())
-	}
-}
-
-func getUserFromToken(c *gin.Context, token string, oauthConf oauth2.Config) {
-	var user *github.User
-	var err error
-
+// getUserFromGithubToken this function will get a user from github token
+func getUserFromGithubToken(c *gin.Context, githubToken string, oauthConf oauth2.Config) {
 	// we try to get from database
-	githubUser, err := GetUserByToken(token)
+	githubUser, err := GetUserByGithubToken(githubToken)
 
 	if err != nil {
 		// we get from cache
-		user, err = githubOauthClient(c, token, oauthConf, true)
+		githubUser, err := githubOauthClient(c, githubToken, oauthConf, true)
 		if err != nil {
 			// we don't get from cache
-			user, err = githubOauthClient(c, token, oauthConf, false)
+			githubUser, err := githubOauthClient(c, githubToken, oauthConf, false)
 			if err != nil {
-				log.Println(err.Error())
+				c.JSON(http.StatusNotFound, gin.H{"reason": err.Error()})
 			} else {
-				createUserHandler(user, token)
+				err := CreateUser(*githubUser, githubToken)
+				if err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"reason": err.Error()})
+				}
 			}
 		} else {
-			createUserHandler(user, token)
+			err := CreateUser(*githubUser, githubToken)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"reason": err.Error()})
+			}
 		}
-	} else {
-		user.Name = &githubUser.Name
-		user.Email = &githubUser.Name
-		user.NodeID = &githubUser.GithubId
-		user.AvatarURL = &githubUser.AvatarUrl
+	}
+
+	// we generate the JWT token that we will return to the user
+	jwtValidToken, err := app.GenerateJWT(githubToken)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"reason": "Failed to generate Jwt token: " + err.Error(),
+		})
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -155,16 +155,16 @@ func getUserFromToken(c *gin.Context, token string, oauthConf oauth2.Config) {
 		"user": gin.H{
 			"id": 1,
 			"github_profile": gin.H{
-				"name":       user.Name,
-				"email":      user.Email,
-				"github_id":  user.NodeID,
-				"avatar_url": user.AvatarURL,
+				"name":       &githubUser.Name,
+				"email":      &githubUser.Email,
+				"github_id":  &githubUser.GithubId,
+				"avatar_url": &githubUser.AvatarUrl,
 			},
 			"active":     true,
 			"created_at": time.Now(),
 			"updated_at": time.Now(),
 		},
-		"token": token,
+		"token": jwtValidToken,
 	})
 }
 
