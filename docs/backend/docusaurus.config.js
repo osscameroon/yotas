@@ -19,12 +19,6 @@ module.exports = {
         src: 'img/logo.svg',
       },
       items: [
-        {
-          type: 'doc',
-          docId: 'intro',
-          position: 'left',
-          label: 'Docs',
-        },
         {to: '/api', label: 'API', position: 'left'},
         {
           href: 'https://github.com/osscameroon/yotas',
