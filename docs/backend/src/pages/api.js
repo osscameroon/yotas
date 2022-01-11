@@ -34,7 +34,7 @@ const ApiDoc = () => {
 
   return (
     <Layout title="Api">
-      <RedocStandalone specUrl="/static/api/specs.yaml" options={options}/>
+      <RedocStandalone specUrl="/api/specs.yaml" options={options}/>
     </Layout>
   )
 }
