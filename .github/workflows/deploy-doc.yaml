@@ -9,10 +9,6 @@ jobs:
   hostme_deployment_job:
     runs-on: ubuntu-latest
     name: Hostme.Space deployment
-    
-    strategy:
-      matrix:
-        node-version: [12.x]
 
     steps:
       - uses: actions/checkout@v2
