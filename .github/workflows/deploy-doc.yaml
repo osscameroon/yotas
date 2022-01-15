@@ -6,18 +6,15 @@ jobs:
   hostme_deployment_job:
     runs-on: ubuntu-latest
     name: Hostme.Space deployment
-    
-    strategy:
-      matrix:
-        node-version: [12.x]
 
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js setupnode
         uses: actions/setup-node@v1
       - name: Use osscamerooon github action
         uses: osscameroon/hostme.gh-action@v2
         with:
+          node-version: '14'
           project-zip: 'doc-yotas.zip'
           hostme-project-name: 'doc-yotas'
           hostme-api-token: '${{ secrets.HOSTME_API_TOKEN }}'
