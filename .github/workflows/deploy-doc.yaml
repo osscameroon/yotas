@@ -9,9 +9,6 @@ jobs:
   hostme_deployment_job:
     runs-on: ubuntu-latest
     name: Hostme.Space deployment
-    defaults:
-      run:
-        working-directory: ./docs/backend 
     
     strategy:
       matrix:
