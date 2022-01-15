@@ -17,8 +17,8 @@ jobs:
         uses: actions/setup-node@v1
       - name: Use osscamerooon github action
         uses: osscameroon/hostme.gh-action@v2
-        working-directory: ./docs/backend 
         with:
+          working-directory: ./docs/backend 
           project-zip: 'doc-yotas.zip'
           hostme-project-name: 'doc-yotas'
           hostme-api-token: '${{ secrets.HOSTME_API_TOKEN }}'
