@@ -18,13 +18,13 @@ jobs:
       - name: Use osscamerooon github action
         uses: osscameroon/hostme.gh-action@v2
         with:
-          working-directory: ./docs/backend 
           project-zip: 'doc-yotas.zip'
           hostme-project-name: 'doc-yotas'
           hostme-api-token: '${{ secrets.HOSTME_API_TOKEN }}'
           # We zip the project by excluding .git subdirectory
           # (but if we want to build something, we can add those commands here)
           commands: |
+            cd ./docs/backend
             yarn install && yarn build
             echo [-] Zipping of the project in progress...
             cd ./build && zip -r 'doc-yotas.zip' .
