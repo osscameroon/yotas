@@ -1,9 +1,6 @@
 name: Deploy yotas documentation
 
-on:
-  push:
-    branches:
-      - 'deploy/doc'
+on: [push]
 
 jobs:
   hostme_deployment_job:
