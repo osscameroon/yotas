@@ -21,7 +21,7 @@ jobs:
         with:
           api-token: '${{ secrets.HOSTME_API_TOKEN }}'
           commands: |
-            cd ./frontend/
+            cd ./frontend
             yarn install && yarn build
             echo "yotas" > h_name.out
             echo "./build" > h_target.out
