@@ -1,14 +1,14 @@
-name: Deploy yotas documentation
+name: Deploy yotas frontend
 
 on:
   push:
     branches:
-      - deploy/doc
+      - deploy/front
 
 jobs:
   hostme_deployment_job:
     runs-on: ubuntu-latest
-    name: Hostme.Space doc deployment
+    name: Hostme.Space front deployment
 
     steps:
       - uses: actions/checkout@v2
@@ -21,7 +21,7 @@ jobs:
         with:
           api-token: '${{ secrets.HOSTME_API_TOKEN }}'
           commands: |
-            cd ./docs/backend
+            cd ./frontend/
             yarn install && yarn build
-            echo "doc-yotas" > h_name.out
+            echo "yotas" > h_name.out
             echo "./build" > h_target.out
