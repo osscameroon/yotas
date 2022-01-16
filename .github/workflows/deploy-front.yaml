@@ -23,5 +23,5 @@ jobs:
           commands: |
             cd ./frontend
             yarn install && yarn build
-            echo "yotas" > h_name.out
+            echo "front-yotas" > h_name.out
             echo "./build" > h_target.out
